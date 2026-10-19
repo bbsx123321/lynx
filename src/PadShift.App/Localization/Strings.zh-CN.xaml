@@ -205,10 +205,10 @@
     <sys:String x:Key="update.section">软件更新</sys:String>
     <sys:String x:Key="update.check">检查更新</sys:String>
     <sys:String x:Key="update.checking">正在检查更新…</sys:String>
-    <sys:String x:Key="update.site">官网 / 下载</sys:String>
+    <sys:String x:Key="update.site">下载页</sys:String>
     <sys:String x:Key="update.latest">已是最新版本（v{0}）。</sys:String>
-    <sys:String x:Key="update.available">发现新版本 {0}（当前 v{1}），到官网或 GitHub Releases 下载（官网提供直链与国内加速镜像）。</sys:String>
-    <sys:String x:Key="update.failed">检查更新失败：网络不可达或 GitHub 限流；可直接打开官网下载页。</sys:String>
+    <sys:String x:Key="update.available">发现新版本 {0}（当前 v{1}），到 GitHub Releases 下载（也可用国内加速镜像直链）。</sys:String>
+    <sys:String x:Key="update.failed">检查更新失败：网络不可达或 GitHub 限流；可直接打开下载页。</sys:String>
     <sys:String x:Key="conf.delete">删除配置</sys:String>
     <sys:String x:Key="conf.importdup">导入重名配置</sys:String>
     <sys:String x:Key="conf.disable">停用映射（释放所有按键）</sys:String>

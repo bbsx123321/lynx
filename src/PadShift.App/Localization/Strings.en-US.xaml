@@ -205,9 +205,9 @@
     <sys:String x:Key="update.section">Software updates</sys:String>
     <sys:String x:Key="update.check">Check for updates</sys:String>
     <sys:String x:Key="update.checking">Checking for updates…</sys:String>
-    <sys:String x:Key="update.site">Website / download</sys:String>
+    <sys:String x:Key="update.site">Download page</sys:String>
     <sys:String x:Key="update.latest">You are up to date (v{0}).</sys:String>
-    <sys:String x:Key="update.available">New version {0} is available (current v{1}). Download it from the website or GitHub Releases — the website offers both a direct link and a CN mirror.</sys:String>
+    <sys:String x:Key="update.available">New version {0} is available (current v{1}). Download it from GitHub Releases — a direct link and a CN mirror are both available.</sys:String>
     <sys:String x:Key="update.failed">Update check failed: network unreachable or GitHub rate limit. You can open the download page instead.</sys:String>
     <sys:String x:Key="conf.delete">Delete profile</sys:String>
     <sys:String x:Key="conf.importdup">Import duplicate profile</sys:String>

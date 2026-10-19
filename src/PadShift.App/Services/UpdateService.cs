@@ -29,7 +29,7 @@ public static class UpdateService
 
     public const string ProxyPrefix = "https://gh-proxy.com/";
 
-    public static readonly Uri Website = new("https://bbsx123321.github.io/lynx/");
+    public static readonly Uri Website = new("https://github.com/bbsx123321/lynx/releases");
 
     private static readonly Uri LatestApi = new($"https://api.github.com/repos/{Repository}/releases/latest");
 
