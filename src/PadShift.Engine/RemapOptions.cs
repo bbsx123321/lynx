@@ -6,7 +6,7 @@ namespace PadShift.Engine;
 /// </summary>
 public sealed class RemapOptions
 {
-    /// <summary>Number of addressable non-base layers (1..19). the v2.6 protocol caps this at 12.</summary>
+    /// <summary>Number of addressable non-base layers (1..19). the v2.6 wire protocol caps this at 12.</summary>
     public int MaxLayers { get; init; } = 12;
 
     /// <summary>Nominal poll period used by the host façade; the engine itself is time-driven by <c>nowMs</c>.</summary>

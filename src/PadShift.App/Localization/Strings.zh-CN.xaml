@@ -117,7 +117,7 @@
     <sys:String x:Key="L111">环大小 %</sys:String>
     <sys:String x:Key="L112">用于映射的键盘按键（不需要管理员权限）</sys:String>
     <sys:String x:Key="L113">用户命令 / 震动 / 摇杆轴等本客户端未建模的元素会以“原样保留”行显示，保存时不会丢失。</sys:String>
-    <sys:String x:Key="L114">留空 = 自动选择（存在 the v2.6 protocol 时用 Public\Documents\the v2.6 protocol\Profiles，否则 Documents\PadShift\Profiles）。预设库取同级的 Presets。修改在下次启动生效。</sys:String>
+    <sys:String x:Key="L114">留空 = 自动选择（存在 the v2.6 wire protocol 时用 Public\Documents\the v2.6 wire protocol\Profiles，否则 Documents\PadShift\Profiles）。预设库取同级的 Presets。修改在下次启动生效。</sys:String>
     <sys:String x:Key="L115">确定</sys:String>
     <sys:String x:Key="L116">确认</sys:String>
     <sys:String x:Key="L117">确认对话框</sys:String>

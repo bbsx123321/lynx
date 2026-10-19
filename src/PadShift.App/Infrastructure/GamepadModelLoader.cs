@@ -22,7 +22,7 @@ public readonly struct GamepadControlMap
     /// <summary>Canonical part name used by the view ("A", "StickLeft", "DpadUp", ...).</summary>
     public string Name { get; }
 
-    /// <summary>the v2.6 protocol button id, or null for body/decoration geometry.</summary>
+    /// <summary>the v2.6 wire protocol button id, or null for body/decoration geometry.</summary>
     public long? ButtonId { get; }
 
     public GamepadPartKind Kind { get; }

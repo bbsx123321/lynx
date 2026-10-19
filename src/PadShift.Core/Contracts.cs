@@ -37,7 +37,7 @@ public sealed class ControllerState
 }
 
 /// <summary>
-/// 轴索引常量。和 the v2.6 protocol 相同顺序：左摇杆在前，触发器在最后。
+/// 轴索引常量。和 the v2.6 wire protocol 相同顺序：左摇杆在前，触发器在最后。
 /// </summary>
 public static class Axes
 {
@@ -50,7 +50,7 @@ public static class Axes
 }
 
 /// <summary>
-/// 按钮编号。沿用 the v2.6 protocol 的 DIK 语义不方便（键盘才是 DIK），
+/// 按钮编号。沿用 the v2.6 wire protocol 的 DIK 语义不方便（键盘才是 DIK），
 /// 这里用自洽的游戏手柄编号；<see cref="ButtonIds.FromDik"/> 负责 .rewasd 里的键盘码映射。
 /// </summary>
 public static class ButtonIds

@@ -60,7 +60,7 @@ public static class ProfileTransfer
             string destination = Path.Combine(controllerFolder, Path.GetFileName(sourceFile));
             File.Copy(sourceFile, destination, overwrite: true);
 
-            // The copy is only kept when it parses as a the v2.6 protocol profile; otherwise it is a half-import.
+            // The copy is only kept when it parses as a the v2.6 wire protocol profile; otherwise it is a half-import.
             ProfileIo.Load(destination);
 
             return new ImportResult(true, destination, Path.GetFileName(gameFolder), null);
@@ -126,7 +126,7 @@ public static class ProfileTransfer
         }
     }
 
-    /// <summary>Sibling <c>Presets</c> folder of a profiles root (the the v2.6 protocol layout).</summary>
+    /// <summary>Sibling <c>Presets</c> folder of a profiles root (the the v2.6 wire protocol layout).</summary>
     public static string DerivePresetsRoot(string? profilesRoot)
     {
         if (string.IsNullOrWhiteSpace(profilesRoot))

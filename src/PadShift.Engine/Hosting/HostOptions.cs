@@ -5,7 +5,7 @@ using System.IO;
 namespace PadShift.Engine.Hosting;
 
 /// <summary>
-/// 手柄组合键 → 槽位热键（长按触发）。<see cref="Slot"/> 是 the v2.6 protocol 的 1 基槽位号（1..4）；
+/// 手柄组合键 → 槽位热键（长按触发）。<see cref="Slot"/> 是 the v2.6 wire protocol 的 1 基槽位号（1..4）；
 /// <see cref="Buttons"/> 必须同时按住 <see cref="HoldMs"/> 毫秒才切换一次，松开前不会重复触发。
 /// </summary>
 /// <param name="Slot">目标槽位，1..4（宿主内部转换成 0..3 的槽位索引）。</param>
@@ -58,7 +58,7 @@ public sealed record SlotHotkey
 /// <summary>Process-level host configuration (poll rate, profile folder, slot count).</summary>
 public sealed class HostOptions
 {
-    /// <summary>Poll period, milliseconds. the v2.6 protocol uses 4 ms (Normal), 2 ms (High), 1 ms (Ultra).</summary>
+    /// <summary>Poll period, milliseconds. the v2.6 wire protocol uses 4 ms (Normal), 2 ms (High), 1 ms (Ultra).</summary>
     public int TickMs { get; init; } = 4;
 
     /// <summary>屏蔽背键（P1–P4）：快照拷贝时清位，映射与 UI 轮询都不再看到背键输入。</summary>
@@ -72,7 +72,7 @@ public sealed class HostOptions
     /// <summary>Physical device id fed to every engine (see <see cref="RemapOptions.DeviceId"/>).</summary>
     public long DeviceId { get; init; } = 1;
 
-    /// <summary>Number of profile slots; the v2.6 protocol exposes 4 (8 internally).</summary>
+    /// <summary>Number of profile slots; the v2.6 wire protocol exposes 4 (8 internally).</summary>
     public int MaxSlots { get; init; } = 4;
 
     /// <summary>

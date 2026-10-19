@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace PadShift.Core.Profile;
 
 /// <summary>
-/// .rewasd 文件根对象（schemaVersion 3）。字段名与 the v2.6 protocol 的
+/// .rewasd 文件根对象（schemaVersion 3）。字段名与 the v2.6 wire protocol 的
 /// <c>GamepadProfile</c> 一致；未知字段用 <see cref="Extra"/> 兜底，
 /// 保证「读入 → 写出」不丢数据。
 /// </summary>

@@ -5,7 +5,7 @@ using PadShift.Core.Host;
 namespace PadShift.Api;
 
 /// <summary>
-/// 控制器列表项：外层多态壳，<c>DataType</c> 与实测 the v2.6 protocol 响应
+/// 控制器列表项：外层多态壳，<c>DataType</c> 与实测 the v2.6 wire protocol 响应
 /// <c>[{"DataType":"PeripheralController","Controllers":[...]}]</c> 一致（docs/01-components.md §6）。
 /// PadShift 把所有设备都装进这个壳，保持列表形状稳定。
 /// </summary>
@@ -30,19 +30,19 @@ public sealed record PeripheralDeviceDto(
     Slot? CurrentSlot = null,
     [property: JsonPropertyName("RemapState")] RemapState? RemapStateValue = null);
 
-/// <summary>the v2.6 protocol 的 ManufacturerInfo；我们只有 VID/PID 是真实值。</summary>
+/// <summary>the v2.6 wire protocol 的 ManufacturerInfo；我们只有 VID/PID 是真实值。</summary>
 public sealed record ManufacturerInfoDto(int VendorId, int ProductId);
 
-/// <summary>the v2.6 protocol 的 AppliedConfigDto。PadShift 只跟踪文件路径，没有配置 Id / GameId。</summary>
+/// <summary>the v2.6 wire protocol 的 AppliedConfigDto。PadShift 只跟踪文件路径，没有配置 Id / GameId。</summary>
 public sealed record AppliedConfigDto(Guid? Id, Guid? GameId, string? Name, string? GameName, string? Path);
 
-/// <summary>ApplyConfig / EnableRemap 的统一响应（字段名沿用 the v2.6 protocol 的拼写）。</summary>
+/// <summary>ApplyConfig / EnableRemap 的统一响应（字段名沿用 the v2.6 wire protocol 的拼写）。</summary>
 public sealed record EnableRemapResponse(bool IsSucceded, bool DontReCallEnableRemap, IReadOnlyList<object> Dialogs);
 
 public sealed record VersionInfoDto(string Version);
 
 // ---------------------------------------------------------------- 请求体
-// 字段名同时接受 the v2.6 protocol 文档里的名字（Guid / ControllerGuid / Path）和 PadShift 文档里的
+// 字段名同时接受 the v2.6 wire protocol 文档里的名字（Guid / ControllerGuid / Path）和 PadShift 文档里的
 // 别名（ControllerId / ConfigPath）；两条都为空时才报 400。
 
 public sealed record ApplyConfigRequest(
@@ -69,7 +69,7 @@ public sealed record SelectSlotRequest(
     JsonElement? Slot);
 
 /// <summary>
-/// SetLayer request (PadShift extension, no the v2.6 protocol counterpart). Layer 0 is the main layer;
+/// SetLayer request (PadShift extension, no the v2.6 wire protocol counterpart). Layer 0 is the main layer;
 /// 1..19 must be declared by the applied profile's <c>shifts[]</c>.
 /// </summary>
 public sealed record SetLayerRequest(
@@ -99,7 +99,7 @@ public sealed record VibrateRequest(
     int? DurationMs);
 
 // ---------------------------------------------------------------- SSE 载荷
-// 载荷只带 PadShift 真有的字段；字段名对齐 the v2.6 protocol 的事件名（RemapState/Slot/Shift/...）。
+// 载荷只带 PadShift 真有的字段；字段名对齐 the v2.6 wire protocol 的事件名（RemapState/Slot/Shift/...）。
 
 public sealed record ControllerConnectedPayload(PeripheralControllerDto Controller);
 

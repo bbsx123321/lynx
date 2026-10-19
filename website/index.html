@@ -162,7 +162,7 @@ footer .spacer{flex:1}
     <a href="https://github.com/bbsx123321/lynx" target="_blank" rel="noopener">GitHub</a>
     <span class="spacer"></span>
     <div class="badges">
-      <span class="badge">the v2.6 protocol compatible profiles</span>
+      <span class="badge">profile import (.rewasd)</span>
       <span class="badge">3D models: CC0 / MIT</span>
       <span class="badge" data-i18n="badgeLang"></span>
     </div>
@@ -215,17 +215,17 @@ en: {
   s1t: "Download & run",
   s1d: "Grab the portable EXE (about 84 MB) and double-click — nothing to install, it unpacks and starts.",
   s2t: "Pick a config",
-  s2d: "Import a .rewasd profile, reuse your the v2.6 protocol library, or build bindings by clicking controls on the 3D pad.",
+  s2d: "Import a .rewasd profile, reuse your existing library, or build bindings by clicking controls on the 3D pad.",
   s3t: "Enable mapping",
   s3d: "Hit 启用映射 (Enable mapping) and play. Toggle it any time from the tray or a gamepad combo.",
   vigemNote: "Virtual-controller output needs the free ViGEmBus driver — without it Lynx still does pure keyboard/mouse mapping and tells you so. Optional: Interception driver for kernel-level input, HidHide to hide the physical pad from games.",
   badgeLang: "English / 简体中文",
 },
 zh: {
-  tag: "免费开源 · 兼容 the v2.6 protocol · 可交互 3D 手柄",
+  tag: "免费开源 · 配置导入 · 可交互 3D 手柄",
   brandCn: "灵犀 · 手柄映射器",
   title: '重映射你的手柄，<br>配一块<b>活的 3D 手柄</b>。',
-  sub: "灵犀 Lynx 把手柄映射为键盘、鼠标和虚拟手柄。直接读写 配置互通的 .rewasd 配置，你现有的配置库原样可用。",
+  sub: "灵犀 Lynx 把手柄映射为键盘、鼠标和虚拟手柄。直接读写 .rewasd 配置文件，你现有的配置库原样可用。",
   dl: "下载（绿色版 EXE）",
   dlProxy: "国内加速下载",
   src: "源代码",
@@ -275,7 +275,7 @@ function apply() {
   document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = dict[el.dataset.i18n] ?? el.textContent; });
   document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = dict[el.dataset.i18nHtml] ?? el.innerHTML; });
   document.getElementById("langbtn").textContent = lang === "zh" ? "English" : "中文";
-  document.title = lang === "zh" ? "灵犀 Lynx — 免费开源手柄映射器，兼容 the v2.6 protocol" : "Lynx 灵犀 — Free Gamepad Mapper & Remapper";
+  document.title = lang === "zh" ? "灵犀 Lynx — 免费开源手柄映射器" : "Lynx 灵犀 — Free Gamepad Mapper & Remapper";
 }
 function toggleLang() { lang = lang === "zh" ? "en" : "zh"; apply(); save(); }
 function save() { try { localStorage.setItem("padshift-lang", lang); } catch (e) {} }

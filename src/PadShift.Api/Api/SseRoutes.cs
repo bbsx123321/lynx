@@ -6,7 +6,7 @@ using PadShift.Core.Host;
 namespace PadShift.Api;
 
 /// <summary>
-/// <c>GET /v2.6/Events</c>：SSE。帧格式与 the v2.6 protocol 相同（<c>event: &lt;EventName&gt;</c> +
+/// <c>GET /v2.6/Events</c>：SSE。帧格式与 the v2.6 wire protocol 相同（<c>event: &lt;EventName&gt;</c> +
 /// <c>data: &lt;PascalCase JSON&gt;</c>），60 s 心跳。每个订阅者一个有界队列：
 /// 客户端读不动就断开它，绝不阻塞 <see cref="IRemapHost.Event"/> 的其它订阅者。
 /// </summary>

@@ -162,7 +162,7 @@ public sealed class PreferencesViewModel : ObservableObject
         }
     }
 
-    /// <summary>Absolute profiles folder; empty keeps the automatic the v2.6 protocol/PadShift default.</summary>
+    /// <summary>Absolute profiles folder; empty keeps the automatic the v2.6 wire protocol/PadShift default.</summary>
     public string ProfilesRoot
     {
         get => _profilesRoot;

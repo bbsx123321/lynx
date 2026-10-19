@@ -7,8 +7,8 @@ namespace PadShift.Api;
 
 /// <summary>
 /// 可选的共享令牌鉴权。<c>PadShift:Api:Lan=true</c> 且配置了 <c>Token</c> 时，
-/// 所有请求必须带 <c>X-PadShift-Token</c>；这是相对 the v2.6 protocol（完全无鉴权）的有意改进。
-/// 回环模式下不加任何认证，保持与 the v2.6 protocol 客户端兼容。
+/// 所有请求必须带 <c>X-PadShift-Token</c>；这是相对 the v2.6 wire protocol（完全无鉴权）的有意改进。
+/// 回环模式下不加任何认证，保持与 the v2.6 wire protocol 客户端兼容。
 /// </summary>
 public static class TokenSecurity
 {

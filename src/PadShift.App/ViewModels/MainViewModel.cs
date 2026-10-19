@@ -717,7 +717,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// the v2.6 protocol exports are often named <c>Config.rewasd</c>; in that case the profile's app name is a
+    /// the v2.6 wire protocol exports are often named <c>Config.rewasd</c>; in that case the profile's app name is a
     /// much better folder name than "Config". Returns null to keep the file name.
     /// </summary>
     private static string? SuggestImportName(string sourceFile)

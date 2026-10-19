@@ -23,7 +23,7 @@ public static class MetaRoutes
         // 协议版本按字面量返回（协议常量 VERSION_PROTOCOL = "v2.6"）。
         app.MapGet("/v2.6/Info/GetProtocolVersion", () => ApiResults.Json(ProtocolVersion));
 
-        // the v2.6 protocol 的真实版本路由没有 /v2.6 前缀（docs/05-api.md §2 最后一行）。
+        // the v2.6 wire protocol 的真实版本路由没有 /v2.6 前缀（docs/05-api.md §2 最后一行）。
         app.MapGet("/Version", () => ApiResults.Json(new VersionInfoDto(ProtocolVersion)));
 
         // 端点路由跑完后仍没匹配到 endpoint → 404。放在 Use 里可以补上 JSON 字符串错误体并记一次日志。

@@ -924,7 +924,7 @@ public sealed class RemapEngine
             int axis = (int)gamepad.ButtonId;
             if (axis is < 0 or > 5)
             {
-                return; // the v2.6 protocol stick-direction ids (33..60) are not modeled
+                return; // the v2.6 wire protocol stick-direction ids (33..60) are not modeled
             }
 
             int value = (int)Clamp(gamepad.Value ?? 0, axis >= 4 ? 0 : -32768, axis >= 4 ? 255 : 32767);

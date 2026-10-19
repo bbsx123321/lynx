@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace PadShift.Core.Host;
 
-/// <summary>对外暴露的控制器快照（HTTP API / UI 共用）。字段名与 the v2.6 protocol v2.6 DTO 对齐。</summary>
+/// <summary>对外暴露的控制器快照（HTTP API / UI 共用）。字段名与 the v2.6 wire protocol v2.6 DTO 对齐。</summary>
 public sealed record HostController(
     Guid Id,
     string Name,
@@ -17,7 +17,7 @@ public sealed record HostController(
     bool HasRumble,
     int BatteryPercent);
 
-/// <summary>映射总状态。数值与 the v2.6 protocol 的 <c>RemapState</c> 枚举一致。</summary>
+/// <summary>映射总状态。数值与 the v2.6 wire protocol 的 <c>RemapState</c> 枚举一致。</summary>
 public enum RemapState
 {
     NothingApplied = 0,
