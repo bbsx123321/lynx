@@ -287,7 +287,18 @@ public class StickAnimationTests
             pad.StartLive();
             try
             {
-                Pump(TimeSpan.FromMilliseconds(500));
+                // 20 Hz 轮询在 CI 的慢速 runner 上首个往返可能超过 500 ms：轮询断言直到摇杆
+                // 角度到位（上限 5 秒），而不是赌一个固定窗口。
+                var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+                while (DateTime.UtcNow < deadline)
+                {
+                    Pump(TimeSpan.FromMilliseconds(200));
+                    StickTransform current = view.StickTransforms.Single(t => t.PartId == "StickLeft");
+                    if (Math.Abs(current.AxisYDegrees - Gamepad3DView.StickTiltDegrees) < 0.001)
+                    {
+                        break;
+                    }
+                }
             }
             finally
             {
