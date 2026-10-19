@@ -45,3 +45,10 @@ Pages 地址（如 `https://lynx.pages.dev`），重打包即可让软件内「�
 npx wrangler pages dev website --port 8788
 # 浏览器打开 http://127.0.0.1:8788
 ```
+
+## 当前配置（已完成）
+
+- 项目：`lynx`（Cloudflare Pages，直传模式）
+- 生产域名：**https://lynx.bg0.top**（CNAME → lynx-57k.pages.dev，已代理，自动 HTTPS）
+- 兜底地址：https://lynx-57k.pages.dev
+- 更新官网：改 `website/` 后执行 `bash scripts/deploy-pages.sh`

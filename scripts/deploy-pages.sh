@@ -27,4 +27,4 @@ npx --yes wrangler@latest pages deploy website \
   --branch "$BRANCH" \
   --commit-dirty=true
 
-echo "==> 完成。生产地址：https://$PROJECT.pages.dev"
+echo "==> 完成。生产地址：https://$PROJECT.pages.dev （自定义域：https://lynx.bg0.top）"

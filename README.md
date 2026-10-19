@@ -2,6 +2,7 @@
 
 ![icon](assets/icon/padshift-256.png)
 
+[官网 / Website](https://lynx.bg0.top/) ·
 [下载 / Download](https://github.com/bbsx123321/lynx/releases/latest) ·
 [国内加速 / CN mirror](https://gh-proxy.com/https://github.com/bbsx123321/lynx/releases/latest/download/Lynx.exe)
 
@@ -50,7 +51,7 @@ DualSense（CC0）、Xbox 360 / Switch Pro（MIT）。
 ## 目录
 
 ```
-website/               展示页静态源码（可自行部署到任意静态托管）
+website/               官网静态源码（Cloudflare Pages：https://lynx.bg0.top）
 src/PadShift.Core/     领域模型与配置序列化
 src/PadShift.Input/    设备发现与报文解析
 src/PadShift.Output/   输入注入与虚拟手柄
