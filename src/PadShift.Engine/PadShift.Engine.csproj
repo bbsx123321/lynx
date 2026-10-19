@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PadShift.Core\PadShift.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Test seams for the watchdog / pump determinism. -->
+    <InternalsVisibleTo Include="PadShift.Tests" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

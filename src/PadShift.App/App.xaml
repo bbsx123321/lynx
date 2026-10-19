@@ -1,0 +1,19 @@
+<Application x:Class="PadShift.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- 界面字符串：默认简体中文；App.SwitchLanguage 在运行时热切换。 -->
+                <ResourceDictionary Source="Localization/Strings.zh-CN.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FF141418" />
+            <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#FF1E1E24" />
+            <SolidColorBrush x:Key="PanelBorderBrush" Color="#FF2E2E38" />
+            <SolidColorBrush x:Key="TextBrush" Color="#FFE8E8EE" />
+            <SolidColorBrush x:Key="SubtleTextBrush" Color="#FF8F8F9C" />
+            <SolidColorBrush x:Key="AccentBrush" Color="#FF6FB6FF" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

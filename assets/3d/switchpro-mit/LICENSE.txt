@@ -1,0 +1,53 @@
+PadShift 3D controller model - provenance and licence
+====================================================
+
+Model:        Nintendo Switch Pro Controller
+Author:       Larf (3D Controller Overlay); parts catalog from the Khyretos/3dco-plus fork
+Source pages: https://github.com/larfingshnew/3d-controller-overlay
+              https://github.com/Khyretos/3dco-plus
+Direct files: https://github.com/Khyretos/3dco-plus/tree/main/assets/models/Switch%20Pro
+Licence:      MIT License - Copyright (c) 2024 Larf, (c) 2024-2026 Khyretos
+Licence text: https://github.com/Khyretos/3dco-plus/blob/main/LICENSE
+Downloaded:   2026-10-18
+
+The MIT licence requires keeping the copyright notice: it is reproduced below and credited
+in PadShift's Preferences -> 关于 (About) tab.
+
+Conversion performed for PadShift
+----------------------------------
+The per-part OBJ files in parts/ were merged into switchpro.obj + switchpro.mtl by
+tools/model-merge-3dco.py (pure Python, no Blender needed). The script:
+  * maps every part file to the PadShift control groups (A/B/X/Y in Xbox semantics, sticks
+    as stick+cap+ring assemblies that tilt together, shells/decorations onto Body);
+  * applies each part's assembly offset from info.json (stick/cap reuse their ring's
+    offset);
+  * rotates the flat-lying CAD pose into PadShift's display pose (X right, Y up, Z towards
+    the camera) without mirroring.
+
+Scene budget: 5438 triangles, target width 29 scene units. No textures are used.
+
+Raw parts: parts/ (unchanged) + switchpro.obj + switchpro.mtl.
+
+--------------------------------------------------------------------
+The MIT License (MIT)
+
+Copyright (c) 2024 Larf
+Copyright (c) 2024-2026 Khyretos (fork maintainer)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

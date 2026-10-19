@@ -1,0 +1,412 @@
+<Window x:Class="PadShift.App.Views.MacroEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Title}"
+        Width="940"
+        Height="680"
+        MinWidth="780"
+        MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="#FF1B1B21"
+        Foreground="#FFE8E8EE"
+        FontFamily="Segoe UI"
+        FontSize="13">
+
+    <Window.Resources>
+        <Style x:Key="FlatButton" TargetType="Button">
+            <Setter Property="Background" Value="#FF2C2C36" />
+            <Setter Property="BorderBrush" Value="#FF3C3C4A" />
+            <Setter Property="Foreground" Value="#FFE8E8EE" />
+            <Setter Property="Padding" Value="9,3" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FF3A3A48" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FF23232C" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="#FF8F8F9C" />
+            <Setter Property="Margin" Value="0,10,0,3" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="256" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Text="{Binding ContextCaption}"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Foreground="#FFB9D8FF"
+                   Margin="0,0,0,2" />
+
+        <!-- Step list -->
+        <DockPanel Grid.Row="1" Grid.Column="0" Margin="0,8,0,8">
+            <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <Button Content="{DynamicResource L006}" Command="{Binding AddKeyboardDownCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L005}" Command="{Binding AddKeyboardUpCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L007}" Command="{Binding AddMouseButtonCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L008}" Command="{Binding AddMouseMoveCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L004}" Command="{Binding AddWheelCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L002}" Command="{Binding AddGamepadButtonCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L003}" Command="{Binding AddPauseCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L001}" Command="{Binding AddBreakCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+                <Button Content="{DynamicResource L105}" Command="{Binding ClearCommand}"
+                        Style="{StaticResource FlatButton}" Margin="0,0,6,6" />
+            </WrapPanel>
+
+            <ListBox ItemsSource="{Binding Steps}"
+                     SelectedItem="{Binding SelectedStep, Mode=TwoWay}"
+                     Background="#FF15151A"
+                     BorderBrush="#FF2E2E38"
+                     BorderThickness="1"
+                     Foreground="#FFE3E3EA"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="26" />
+                                <ColumnDefinition Width="86" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="{Binding Index}"
+                                       Foreground="#FF8F8F9C"
+                                       VerticalAlignment="Center" />
+
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding KindLabel}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"
+                                       Foreground="#FFB9D8FF" />
+
+                            <Grid Grid.Column="2" Margin="0,0,6,0">
+                                <!-- Keyboard -->
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Keyboard">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <Button Content="{DynamicResource L089}" Click="OnCaptureStepKey"
+                                            Style="{StaticResource FlatButton}" />
+                                    <TextBlock Text="{Binding KeyDisplay}"
+                                               Width="82"
+                                               VerticalAlignment="Center"
+                                               Margin="8,0,6,0"
+                                               Foreground="#FFB8E0FF" />
+                                    <ComboBox ItemsSource="{Binding ActionOptions}"
+                                              SelectedItem="{Binding SelectedActionOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="78" />
+                                </StackPanel>
+
+                                <!-- Mouse button -->
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="MouseButton">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <ComboBox ItemsSource="{Binding MouseButtonOptions}"
+                                              SelectedItem="{Binding SelectedMouseButtonOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="112" />
+                                    <ComboBox ItemsSource="{Binding ActionOptions}"
+                                              SelectedItem="{Binding SelectedActionOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="78"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <!-- Mouse move -->
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="MouseMove">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <ComboBox ItemsSource="{Binding DirectionOptions}"
+                                              SelectedItem="{Binding SelectedDirectionOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="70" />
+                                    <TextBox Text="{Binding Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="74"
+                                             Margin="6,0,0,0" />
+                                    <TextBlock Text="{DynamicResource L038}" VerticalAlignment="Center" Margin="6,0,0,0"
+                                               Foreground="#FF8F8F9C" />
+                                </StackPanel>
+
+                                <!-- Wheel -->
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Wheel">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <ComboBox ItemsSource="{Binding DirectionOptions}"
+                                              SelectedItem="{Binding SelectedDirectionOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="70" />
+                                    <TextBox Text="{Binding Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="62"
+                                             Margin="6,0,0,0" />
+                                    <TextBlock Text="{DynamicResource L100}" VerticalAlignment="Center" Margin="6,0,0,0"
+                                               Foreground="#FF8F8F9C" />
+                                </StackPanel>
+
+                                <!-- Gamepad button -->
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="GamepadButton">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <ComboBox ItemsSource="{Binding PadButtonOptions}"
+                                              SelectedItem="{Binding SelectedPadButtonOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="96" />
+                                    <ComboBox ItemsSource="{Binding ActionOptions}"
+                                              SelectedItem="{Binding SelectedActionOption, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"
+                                              Width="78"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <!-- Pause -->
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Pause">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <TextBox Text="{Binding PauseMs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="88" />
+                                    <TextBlock Text="ms（0–600000）" VerticalAlignment="Center" Margin="6,0,0,0"
+                                               Foreground="#FF8F8F9C" />
+                                </StackPanel>
+
+                                <!-- Break -->
+                                <TextBlock Text="{DynamicResource L072}" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="Break">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <!-- Pass-through -->
+                                <TextBlock Text="{Binding Describe}" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Setter Property="Foreground" Value="#FF9A9AA6" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Kind}" Value="PassThrough">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+
+                            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                                <Button Content="↑"
+                                        ToolTip="{DynamicResource L024}"
+                                        Style="{StaticResource FlatButton}"
+                                        Padding="6,2"
+                                        Margin="2,0,0,0"
+                                        Command="{Binding DataContext.MoveStepUpCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="↓"
+                                        ToolTip="{DynamicResource L025}"
+                                        Style="{StaticResource FlatButton}"
+                                        Padding="6,2"
+                                        Margin="2,0,0,0"
+                                        Command="{Binding DataContext.MoveStepDownCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="{DynamicResource L061}"
+                                        ToolTip="{DynamicResource L062}"
+                                        Style="{StaticResource FlatButton}"
+                                        Margin="2,0,0,0"
+                                        Command="{Binding DataContext.DuplicateStepCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="{DynamicResource L045}"
+                                        ToolTip="{DynamicResource L047}"
+                                        Style="{StaticResource FlatButton}"
+                                        Margin="2,0,0,0"
+                                        Command="{Binding DataContext.RemoveStepCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- Turbo / behaviour -->
+        <Border Grid.Row="1" Grid.Column="1"
+                Background="#FF1E1E24"
+                BorderBrush="#FF2E2E38"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="10"
+                Margin="10,8,0,8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource L127}" FontSize="14" FontWeight="SemiBold"
+                               Foreground="#FFB9D8FF" />
+                    <CheckBox Content="{DynamicResource L018}"
+                              IsChecked="{Binding IsTurbo, Mode=TwoWay}"
+                              Foreground="#FFDADAE2"
+                              Margin="0,10,0,0" />
+                    <CheckBox Content="{DynamicResource L016}"
+                              IsChecked="{Binding IsToggle, Mode=TwoWay}"
+                              Foreground="#FFDADAE2"
+                              Margin="0,6,0,0" />
+
+                    <TextBlock Text="{DynamicResource L141}" Style="{StaticResource FieldLabel}" />
+                    <TextBox Text="{Binding TurboTimes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Width="96" HorizontalAlignment="Left" />
+
+                    <TextBlock Text="{DynamicResource L142}" Style="{StaticResource FieldLabel}" />
+                    <TextBox Text="{Binding TurboPause, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Width="96" HorizontalAlignment="Left" />
+
+                    <CheckBox Content="{DynamicResource L021}"
+                              IsChecked="{Binding TurboMacro, Mode=TwoWay}"
+                              Foreground="#FFDADAE2"
+                              Margin="0,10,0,0" />
+
+                    <TextBlock Text="{DynamicResource L009}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="#FF6F6F7C"
+                               Margin="0,10,0,0" />
+                    <TextBlock Text="{DynamicResource L113}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Foreground="#FF6F6F7C"
+                               Margin="0,6,0,0" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Live preview -->
+        <Border Grid.Row="2" Grid.ColumnSpan="2"
+                Background="#FF1E1E24"
+                BorderBrush="#FF2E2E38"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="10,7">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource L066}" FontSize="11" Foreground="#FF8F8F9C" />
+                <TextBlock Text="{Binding PreviewText}"
+                           TextWrapping="Wrap"
+                           Foreground="#FF9FD3FF"
+                           Margin="0,3,0,0" />
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3"
+                   Grid.ColumnSpan="2"
+                   Text="{Binding ErrorText}"
+                   TextWrapping="Wrap"
+                   Foreground="#FFF0A0A0"
+                   Margin="0,8,0,0" />
+
+        <Grid Grid.Row="4" Grid.ColumnSpan="2" Margin="0,10,0,0">
+            <TextBlock Text="{Binding Message}"
+                       Foreground="#FFF0C070"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{DynamicResource L052}" Click="OnCancel" Style="{StaticResource FlatButton}"
+                        Width="84" Margin="0,0,8,0" />
+                <Button Content="{DynamicResource L115}" Click="OnOk" IsEnabled="{Binding CanSave}"
+                        Style="{StaticResource FlatButton}" Width="96" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

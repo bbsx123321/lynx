@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lynx 灵犀 — Free Gamepad Mapper, the reference tool Compatible</title>
+<meta name="description" content="Lynx (灵犀) is a free open-source gamepad remapper for Windows. Interactive 3D controller, the reference tool-compatible profiles, virtual gamepads, macros, radial menu.">
+<style>
+:root{
+  --bg:#0b0f16;--bg2:#111827;--panel:#141b26;--panel2:#1a2332;
+  --line:#243044;--text:#e8edf4;--muted:#8f9cb0;--accent:#6fb6ff;--accent2:#3fa17f;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font:16px/1.65 "Segoe UI",system-ui,-apple-system,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code,kbd{background:#0d1420;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font:14px/1.6 Consolas,monospace;color:#a8d5ff}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:18px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;color:var(--text)}
+.logo .dot{width:14px;height:14px;border-radius:4px;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+nav .spacer{flex:1}
+.langbtn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 14px;border-radius:9px;cursor:pointer;font-size:14px}
+.langbtn:hover{border-color:var(--accent)}
+.gh{display:flex;align-items:center;gap:7px}
+
+/* hero */
+header{padding:72px 0 48px;text-align:center;background:
+  radial-gradient(1000px 500px at 50% -10%,#16233a 0%,transparent 70%)}
+header .tag{display:inline-block;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 16px;font-size:13.5px;color:var(--muted);margin-bottom:22px}
+header .brandline{font-size:60px;font-weight:800;letter-spacing:-1px;background:linear-gradient(90deg,#E8F2FF,#8FB8E8);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
+header h1{font-size:38px;margin-top:26px;line-height:1.15;letter-spacing:-.5px}
+header h1 b{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+header p.sub{max-width:720px;margin:18px auto 0;color:var(--muted);font-size:18px}
+.dl{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;border-radius:11px;padding:13px 26px;font-size:16px;font-weight:600;border:1px solid transparent;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,#2f7fd6,#1f5ea8);color:#fff}
+.btn.primary:hover{filter:brightness(1.12);text-decoration:none}
+.btn.ghost{background:var(--panel);border-color:var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--accent);text-decoration:none}
+.meta{margin-top:18px;color:var(--muted);font-size:14px}
+.meta .sep{margin:0 10px;opacity:.5}
+
+/* sections */
+section{padding:58px 0;border-top:1px solid var(--line)}
+h2{font-size:30px;margin-bottom:8px;letter-spacing:-.3px}
+p.lead{color:var(--muted);margin-bottom:34px;max-width:760px}
+
+/* gallery */
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.shot{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.shot img{width:100%;display:block}
+.shot .cap{padding:12px 15px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+.shot.wide{grid-column:span 2}
+@media(max-width:720px){.shot.wide{grid-column:span 1}}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.feat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.feat .ic{font-size:26px;margin-bottom:10px}
+.feat h3{font-size:17.5px;margin-bottom:7px}
+.feat p{color:var(--muted);font-size:14.5px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;counter-reset:s}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;top:-13px;left:18px;background:var(--accent);color:#06121f;font-weight:800;border-radius:8px;padding:1px 10px}
+.step h3{font-size:16.5px;margin:6px 0 7px}
+.step p{color:var(--muted);font-size:14.5px}
+
+footer{border-top:1px solid var(--line);padding:36px 0 44px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+footer .spacer{flex:1}
+.badges{display:flex;gap:10px;flex-wrap:wrap}
+.badge{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:4px 11px;font-size:13px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="logo"><svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2C47"/><stop offset="1" stop-color="#0A0E15"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="14" fill="url(#lg1)"/><polygon points="9,24 15,7 24,19" fill="#33507A"/><polygon points="55,24 49,7 40,19" fill="#33507A"/><circle cx="22" cy="38" r="8.5" fill="none" stroke="#6FB6FF" stroke-width="2.6"/><circle cx="22" cy="38" r="2.8" fill="#E8F2FF"/><circle cx="42" cy="38" r="8.5" fill="none" stroke="#6FB6FF" stroke-width="2.6"/><circle cx="42" cy="38" r="2.8" fill="#E8F2FF"/><polygon points="32,49 35.5,52.5 32,56 28.5,52.5" fill="#3FA17F"/></svg>Lynx <em style="font-style:normal;color:var(--muted);font-size:14px">灵犀</em></span>
+    <span class="spacer"></span>
+    <button class="langbtn" id="langbtn" onclick="toggleLang()">中文</button>
+    <a class="gh" href="https://github.com/bbsx123321/lynx" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      GitHub</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <svg width="120" height="120" viewBox="0 0 64 64" aria-hidden="true" style="margin-bottom:18px;filter:drop-shadow(0 10px 28px rgba(30,70,130,.45))"><defs><linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2C47"/><stop offset="1" stop-color="#0A0E15"/></linearGradient></defs><rect x="2" y="2" width="60" height="60" rx="14" fill="url(#lg2)"/><polygon points="9,24 15,7 24,19" fill="#33507A"/><polygon points="55,24 49,7 40,19" fill="#33507A"/><circle cx="22" cy="38" r="8.5" fill="none" stroke="#6FB6FF" stroke-width="2.6"/><circle cx="22" cy="38" r="2.8" fill="#E8F2FF"/><circle cx="42" cy="38" r="8.5" fill="none" stroke="#6FB6FF" stroke-width="2.6"/><circle cx="42" cy="38" r="2.8" fill="#E8F2FF"/><polygon points="32,49 35.5,52.5 32,56 28.5,52.5" fill="#3FA17F"/></svg>
+    <div class="brandline">Lynx <span data-i18n="brandCn"></span></div>
+    <div class="tag" data-i18n="tag"></div>
+    <h1 data-i18n-html="title"></h1>
+    <p class="sub" data-i18n="sub"></p>
+    <div class="dl">
+      <a class="btn primary" id="dlMain" href="#" onclick="return dl(this,'direct')">⬇ <span data-i18n="dl"></span></a>
+      <a class="btn ghost" id="dlProxy" href="#" onclick="return dl(this,'proxy')">🚀 <span data-i18n="dlProxy"></span></a>
+      <a class="btn ghost" href="https://github.com/bbsx123321/lynx" target="_blank" rel="noopener" data-i18n="src"></a>
+    </div>
+    <div class="meta">
+      <span>Windows 10 1809+ / 11 · x64</span><span class="sep">|</span>
+      <span data-i18n="selfContained"></span><span class="sep">|</span>
+      <span data-i18n="free"></span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="shotsTitle"></h2>
+    <p class="lead" data-i18n="shotsLead"></p>
+    <div class="shots">
+      <div class="shot wide"><img src="assets/shot_main_en.png" alt="Lynx main window with the interactive 3D controller"><div class="cap" data-i18n="shotMain"></div></div>
+      <div class="shot"><img src="assets/shot_flip_en.png" alt="Controller flipped to the back"><div class="cap" data-i18n="shotFlip"></div></div>
+      <div class="shot"><img src="assets/shot_xbox360_en.png" alt="Xbox 360 controller skin"><div class="cap" data-i18n="shot360"></div></div>
+      <div class="shot"><img src="assets/shot_switchpro_en.png" alt="Switch Pro controller skin"><div class="cap" data-i18n="shotPro"></div></div>
+      <div class="shot"><img src="assets/shot_2d_zh.png" alt="Chinese UI with the 2D pad"><div class="cap" data-i18n="shot2d"></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="featTitle"></h2>
+    <p class="lead" data-i18n="featLead"></p>
+    <div class="grid">
+      <div class="feat"><div class="ic">🎮</div><h3 data-i18n="f1t"></h3><p data-i18n="f1d"></p></div>
+      <div class="feat"><div class="ic">🔄</div><h3 data-i18n="f2t"></h3><p data-i18n="f2d"></p></div>
+      <div class="feat"><div class="ic">🕹️</div><h3 data-i18n="f3t"></h3><p data-i18n="f3d"></p></div>
+      <div class="feat"><div class="ic">⌨️</div><h3 data-i18n="f4t"></h3><p data-i18n="f4d"></p></div>
+      <div class="feat"><div class="ic">🧩</div><h3 data-i18n="f5t"></h3><p data-i18n="f5d"></p></div>
+      <div class="feat"><div class="ic">🌐</div><h3 data-i18n="f6t"></h3><p data-i18n="f6d"></p></div>
+      <div class="feat"><div class="ic">⭕</div><h3 data-i18n="f7t"></h3><p data-i18n="f7d"></p></div>
+      <div class="feat"><div class="ic">🆓</div><h3 data-i18n="f8t"></h3><p data-i18n="f8d"></p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="startTitle"></h2>
+    <p class="lead" data-i18n="startLead"></p>
+    <div class="steps">
+      <div class="step"><h3 data-i18n="s1t"></h3><p data-i18n="s1d"></p></div>
+      <div class="step"><h3 data-i18n="s2t"></h3><p data-i18n="s2d"></p></div>
+      <div class="step"><h3 data-i18n="s3t"></h3><p data-i18n="s3d"></p></div>
+    </div>
+    <p style="margin-top:22px;color:var(--muted);font-size:14.5px" data-i18n="vigemNote"></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Lynx（灵犀）</span>
+    <a href="https://github.com/bbsx123321/lynx" target="_blank" rel="noopener">GitHub</a>
+    <span class="spacer"></span>
+    <div class="badges">
+      <span class="badge">the reference config tool compatible profiles</span>
+      <span class="badge">3D models: CC0 / MIT</span>
+      <span class="badge" data-i18n="badgeLang"></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const REPO = "bbsx123321/lynx";
+const RELEASE_URL = "https://github.com/" + REPO + "/releases/latest/download/Lynx.exe";
+const PROXY_PREFIX = "https://gh-proxy.com/";
+
+const i18n = {
+en: {
+  tag: "Free & open source · the reference tool compatible · Interactive 3D controller",
+  brandCn: "灵犀",
+  title: 'Remap your gamepad.<br>With a <b>live 3D controller</b>.',
+  sub: "Lynx maps your gamepad to keyboard, mouse and virtual controllers on Windows. It reads and writes the reference tool-compatible .rewasd profiles, so your existing library works as-is.",
+  dl: "Download (portable EXE)",
+  dlProxy: "CN mirror",
+  src: "Source code",
+  selfContained: "Self-contained, no .NET install",
+  free: "Free, no account, no ads",
+  shotsTitle: "Screenshots",
+  shotsLead: "Rendered from the real application — the 3D controller animates live: sticks tilt, triggers compress, buttons glow; drag to flip it around and pick a skin.",
+  shotMain: "Main window — live 3D controller with per-control labels and the binding editor",
+  shotFlip: "Drag the empty area to flip the controller and inspect the back",
+  shot360: "Switchable skin: Microsoft Xbox 360",
+  shotPro: "Switchable skin: Nintendo Switch Pro",
+  shot2d: "Simplified-Chinese UI with the fallback 2D diagram (dark-friendly)",
+  featTitle: "Why Lynx",
+  featLead: "Everything you expect from a commercial remapper, in a clean open-source package.",
+  f1t: "Interactive 3D controller",
+  f1d: "A real-time 3D gamepad in the main window: click parts to bind, drag the sticks, press animations, three switchable controller skins (DualSense / Xbox 360 / Switch Pro).",
+  f2t: "config compatibility",
+  f2d: "Reads and writes .rewasd profile files from the profiles library folder; compatible with its local HTTP API — your existing configs keep working.",
+  f3t: "Full mapping engine",
+  f3d: "Layers with activators, masks, shift modes, stick zones, turbo, macros — driven by a 4 ms engine loop that survives heavy load.",
+  f4t: "Keyboard, mouse & virtual pads",
+  f4d: "SendInput or driver-level Interception output, ViGEm virtual Xbox 360 / DS4 controllers, with graceful fallback when drivers are missing.",
+  f5t: "Overlay & radial menu",
+  f5d: "Click-through toast overlay, crosshair with magnifier, an 8-sector radial menu triggered by gamepad combos or a global hotkey.",
+  f6t: "Bilingual UI",
+  f6d: "The whole interface switches between English and Simplified Chinese on the fly — pick it in Preferences.",
+  f7t: "Tray-friendly",
+  f7d: "Close-to-tray keeps mapping alive in the background; the local API and SSE stream stay available for external tools.",
+  f8t: "Free forever",
+  f8d: "Open source, no account, no telemetry, no ads. 3D models are CC0/MIT-licensed.",
+  startTitle: "Quick start",
+  startLead: "Three steps from download to a working remap.",
+  s1t: "Download & run",
+  s1d: "Grab the portable EXE (about 84 MB) and double-click — nothing to install, it unpacks and starts.",
+  s2t: "Pick a config",
+  s2d: "Import a .rewasd profile, reuse your the reference tool library, or build bindings by clicking controls on the 3D pad.",
+  s3t: "Enable mapping",
+  s3d: "Hit 启用映射 (Enable mapping) and play. Toggle it any time from the tray or a gamepad combo.",
+  vigemNote: "Virtual-controller output needs the free ViGEmBus driver — without it Lynx still does pure keyboard/mouse mapping and tells you so. Optional: Interception driver for kernel-level input, HidHide to hide the physical pad from games.",
+  badgeLang: "English / 简体中文",
+},
+zh: {
+  tag: "免费开源 · 兼容 the reference tool · 可交互 3D 手柄",
+  brandCn: "灵犀 · 手柄映射器",
+  title: '重映射你的手柄，<br>配一块<b>活的 3D 手柄</b>。',
+  sub: "灵犀 Lynx 把手柄映射为键盘、鼠标和虚拟手柄。直接读写 配置互通的 .rewasd 配置，你现有的配置库原样可用。",
+  dl: "下载（绿色版 EXE）",
+  dlProxy: "国内加速下载",
+  src: "源代码",
+  selfContained: "自包含运行时，无需安装 .NET",
+  free: "免费、无账号、无广告",
+  shotsTitle: "界面截图",
+  shotsLead: "以下均为真实程序渲染 —— 3D 手柄实时动画：摇杆摆动、扳机压缩、按键发光；可拖动翻转，可切换外形。",
+  shotMain: "主界面 —— 实时 3D 手柄、控件标签与绑定编辑器",
+  shotFlip: "拖动空白处翻转手柄查看背面",
+  shot360: "可切换外形：Microsoft Xbox 360",
+  shotPro: "可切换外形：Nintendo Switch Pro",
+  shot2d: "简体中文界面与 2D 矢量示意图（回退视图）",
+  featTitle: "功能优势",
+  featLead: "商业级映射器该有的能力，装在一个干净的开源包里。",
+  f1t: "可交互 3D 手柄",
+  f1d: "主窗口内建实时 3D 手柄：点击部件即绑定、拖动摇杆演示、按下动画，三种外形一键切换（DualSense / Xbox 360 / Switch Pro）。",
+  f2t: "配置互通",
+  f2d: "直接读写 the reference tool 配置库里的 .rewasd 文件，兼容其本地 HTTP API —— 你现有的配置继续用。",
+  f3t: "完整映射引擎",
+  f3d: "层 + 激活器、掩码、Shift 模式、摇杆分区、Turbo 连发、宏，由 4 ms 引擎循环驱动，高负载下依然稳定。",
+  f4t: "键鼠 + 虚拟手柄输出",
+  f4d: "SendInput 或驱动级 Interception 注入，ViGEm 虚拟 Xbox 360 / DS4 手柄；驱动缺失时自动降级并提示。",
+  f5t: "叠加层与径向菜单",
+  f5d: "点击穿透的提示叠加层、带放大镜的准星、8 扇区径向菜单（手柄组合键或全局热键触发）。",
+  f6t: "中英双语",
+  f6d: "整个界面在简体中文与 English 之间即时切换 —— 偏好设置里一选即可。",
+  f7t: "托盘常驻",
+  f7d: "关窗收进托盘、映射后台继续；本地 API 与 SSE 流保持可用，方便外部工具接入。",
+  f8t: "永久免费",
+  f8d: "开源、无账号、无遥测、无广告。3D 模型采用 CC0/MIT 许可。",
+  startTitle: "快速开始",
+  startLead: "从下载到可用映射，只需三步。",
+  s1t: "下载运行",
+  s1d: "下载绿色版 EXE（约 84 MB），双击即用 —— 免安装，自解压启动。",
+  s2t: "选择配置",
+  s2d: "导入 .rewasd 配置、复用 the reference tool 配置库，或在 3D 手柄上点击控件从零搭建绑定。",
+  s3t: "启用映射",
+  s3d: "点「启用映射」即可开玩；随时从托盘或手柄组合键开关。",
+  vigemNote: "虚拟手柄输出需要免费的 ViGEmBus 驱动 —— 未安装时 灵犀自动降级为纯键鼠映射并给出提示。可选：Interception 驱动提供内核级注入，HidHide 对游戏隐藏物理手柄。",
+  badgeLang: "English / 简体中文",
+}};
+
+let lang = "en";
+function apply() {
+  const dict = i18n[lang];
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = dict[el.dataset.i18n] ?? el.textContent; });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = dict[el.dataset.i18nHtml] ?? el.innerHTML; });
+  document.getElementById("langbtn").textContent = lang === "zh" ? "English" : "中文";
+  document.title = lang === "zh" ? "灵犀 Lynx — 免费开源手柄映射器，兼容 the reference tool" : "Lynx 灵犀 — Free Gamepad Mapper, the reference tool Compatible";
+}
+function toggleLang() { lang = lang === "zh" ? "en" : "zh"; apply(); save(); }
+function save() { try { localStorage.setItem("padshift-lang", lang); } catch (e) {} }
+function load() { try { const v = localStorage.getItem("padshift-lang"); if (v === "zh" || v === "en") lang = v; } catch (e) {} }
+function dl(el, kind) {
+  const url = kind === "proxy" ? PROXY_PREFIX + RELEASE_URL : RELEASE_URL;
+  window.open(url, "_blank", "noopener");
+  return false;
+}
+load(); apply();
+</script>
+</body>
+</html>

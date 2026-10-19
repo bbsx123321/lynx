@@ -1,0 +1,31 @@
+PadShift — 3D controller asset provenance
+========================================
+
+Status: the main-window controller is a downloaded CC0 model, with the original procedural
+controller kept as the automatic fallback.
+
+Bundled model
+-------------
+* Folder: assets/3d/dualsense-cc0/
+* Model: Sony DualSense controller by CasperH2O (3DControllerModels)
+* Source: https://github.com/CasperH2O/3DControllerModels
+* Licence: CC0 1.0 Universal (public-domain dedication)
+* Downloaded: 2026-10-18
+* Files: source.blend (raw source), dualsense.obj + dualsense.mtl (import-ready conversion),
+  LICENSE.txt (full provenance and conversion notes).
+* Attribution is not required by CC0; the author/licence are credited in Preferences -> 关于.
+* Why DualSense: it models real stick caps (dished top + wall + tapered shaft) that tilt
+  directly. The previously bundled Xbox One asset models its stick objects as the recessed
+  wells, which tilted as sockets and had to be worked around.
+
+Procedural fallback
+-------------------
+If assets/3d/dualsense-cc0 is missing or cannot be parsed, the view automatically falls back to
+src/PadShift.App/Infrastructure/GamepadMeshBuilder.cs (original geometry, same licence as the
+rest of PadShift). This path is covered by tests/PadShift.Tests/GamepadModelTests.cs and
+VisualAssetTests.cs.
+
+Renderer
+--------
+WPF Viewport3D (System.Windows.Media.Media3D) with a hand-written OBJ/MTL importer
+(src/PadShift.App/Infrastructure/GamepadModelLoader.cs). No NuGet package, no textures.

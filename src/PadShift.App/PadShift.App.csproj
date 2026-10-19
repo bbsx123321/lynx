@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PadShift.Api\PadShift.Api.csproj" />
+    <ProjectReference Include="..\PadShift.Core\PadShift.Core.csproj" />
+    <ProjectReference Include="..\PadShift.Engine\PadShift.Engine.csproj" />
+    <ProjectReference Include="..\PadShift.Input\PadShift.Input.csproj" />
+    <ProjectReference Include="..\PadShift.Output\PadShift.Output.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The HTTP API is hosted in-process (ApiHost), so the desktop app needs the shared framework. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- WinForms is only used for the tray icon. Drop its implicit usings so WPF type names
+         (Application, ListBox, KeyEventArgs, Timer, MouseButtons...) stay unambiguous. -->
+    <Using Remove="System.Drawing" />
+    <Using Remove="System.Windows.Forms" />
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The tray/window icon lives with the other artwork under assets\icon so the store image and
+         the ICO cannot drift apart. Embedded (not Content) so a single-file publish still has it. -->
+    <EmbeddedResource Include="..\..\assets\icon\padshift.ico"
+                      LogicalName="PadShift.App.Assets.padshift.ico" />
+
+    <!-- CC0 controller model (OBJ + MTL + licence note). Copied next to the executable so the
+         runtime loader can find it without embedding the mesh in the assembly. -->
+    <Content Include="..\..\assets\3d\**\*"
+             Link="assets\3d\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- Tray icon (System.Windows.Forms.NotifyIcon); no WinForms windows are used. -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Shell / Explorer metadata for PadShift.App.exe. -->
+    <ApplicationIcon>..\..\assets\icon\padshift.ico</ApplicationIcon>
+    <AssemblyTitle>Lynx</AssemblyTitle>
+    <Product>Lynx (灵犀)</Product>
+    <Company>Lynx</Company>
+    <Description>灵犀 Lynx — 手柄映射工具（WPF，含 3D 手柄示意图；内部工程标识仍为 PadShift）</Description>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <NeutralLanguage>zh-Hans</NeutralLanguage>
+  </PropertyGroup>
+
+</Project>

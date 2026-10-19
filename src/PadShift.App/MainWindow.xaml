@@ -1,0 +1,1489 @@
+<Window x:Class="PadShift.App.MainWindow"
+        xmlns:converters="clr-namespace:PadShift.App.Converters"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:views="clr-namespace:PadShift.App.Views"
+        mc:Ignorable="d"
+        d:DesignHeight="780"
+        d:DesignWidth="1280"
+        Title="{DynamicResource L014}"
+        StateChanged="OnWindowStateChanged"
+        Width="1280"
+        Height="780"
+        MinWidth="1080"
+        MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="#FF141418"
+        Foreground="#FFE8E8EE"
+        FontFamily="Segoe UI"
+        FontSize="13"
+        Closing="OnWindowClosing">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converters:NullToVisibilityConverter x:Key="NullToCollapsed" />
+
+        <!-- =====================================================================================
+             Gamepad artwork: 2D shapes with gradient lighting, no bitmaps. The body is a single
+             silhouette (also used as a clip geometry); every control keeps the exact geometry of
+             its invisible hit area so clicks still land on GamepadControlViewModel.
+             ===================================================================================== -->
+
+        <!-- The one silhouette, shared by the body, its edge, its inner rim and the shading clip. -->
+        <PathGeometry x:Key="PadBodyGeometry"
+                      Figures="M 210,60 C 250,52 280,52 300,64 C 330,78 352,100 356,132 C 362,170 356,210 334,232 C 316,250 290,252 270,238 C 250,224 240,204 226,192 C 220,187 215,185 210,185 C 205,185 200,187 194,192 C 180,204 170,224 150,238 C 130,252 104,250 86,232 C 64,210 58,170 64,132 C 68,100 90,78 120,64 C 140,52 170,52 210,60 Z" />
+
+        <!-- Top-light body: light grey crown, near-black bottom, plus a darker offset edge behind. -->
+        <LinearGradientBrush x:Key="PadBodyBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#FF5B5B6B" Offset="0" />
+            <GradientStop Color="#FF3E3E4B" Offset="0.16" />
+            <GradientStop Color="#FF2A2A34" Offset="0.55" />
+            <GradientStop Color="#FF18181E" Offset="0.86" />
+            <GradientStop Color="#FF101014" Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="PadBodyRimBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#B3FFFFFF" Offset="0" />
+            <GradientStop Color="#33FFFFFF" Offset="0.22" />
+            <GradientStop Color="#00FFFFFF" Offset="0.52" />
+            <GradientStop Color="#99000000" Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="PadBottomShadeBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#00000000" Offset="0.45" />
+            <GradientStop Color="#59000000" Offset="0.8" />
+            <GradientStop Color="#8C000000" Offset="1" />
+        </LinearGradientBrush>
+
+        <RadialGradientBrush x:Key="GripHighlightBrush" GradientOrigin="0.36,0.3" Center="0.5,0.5" RadiusX="0.55" RadiusY="0.55">
+            <GradientStop Color="#3DFFFFFF" Offset="0" />
+            <GradientStop Color="#14FFFFFF" Offset="0.5" />
+            <GradientStop Color="#00FFFFFF" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="CenterPlateBrush" GradientOrigin="0.5,0.32" Center="0.5,0.5" RadiusX="0.55" RadiusY="0.6">
+            <GradientStop Color="#FF0C0C10" Offset="0" />
+            <GradientStop Color="#FF17171D" Offset="0.62" />
+            <GradientStop Color="#FF30303B" Offset="1" />
+        </RadialGradientBrush>
+
+        <!-- Stick well: deep recess with a lit lower rim; cap: raised dome with a top-left light. -->
+        <RadialGradientBrush x:Key="StickWellBrush" GradientOrigin="0.5,0.42" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+            <GradientStop Color="#FF050507" Offset="0" />
+            <GradientStop Color="#FF0D0D12" Offset="0.58" />
+            <GradientStop Color="#FF25252E" Offset="0.86" />
+            <GradientStop Color="#FF3E3E4C" Offset="1" />
+        </RadialGradientBrush>
+
+        <LinearGradientBrush x:Key="StickWellRimBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#CC000000" Offset="0" />
+            <GradientStop Color="#445A5A6A" Offset="0.45" />
+            <GradientStop Color="#FFDAE6F2" Offset="1" />
+        </LinearGradientBrush>
+
+        <RadialGradientBrush x:Key="StickCapBrush" GradientOrigin="0.32,0.22" Center="0.5,0.56" RadiusX="0.74" RadiusY="0.74">
+            <GradientStop Color="#FF84849A" Offset="0" />
+            <GradientStop Color="#FF53535F" Offset="0.32" />
+            <GradientStop Color="#FF2A2A34" Offset="0.72" />
+            <GradientStop Color="#FF111115" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="StickCapHighlightBrush" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+            <GradientStop Color="#D9FFFFFF" Offset="0" />
+            <GradientStop Color="#40FFFFFF" Offset="0.55" />
+            <GradientStop Color="#00FFFFFF" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="StickCenterBrush" GradientOrigin="0.42,0.34" Center="0.5,0.56" RadiusX="0.62" RadiusY="0.62">
+            <GradientStop Color="#FF42424F" Offset="0" />
+            <GradientStop Color="#FF1C1C23" Offset="0.4" />
+            <GradientStop Color="#FF0A0A0D" Offset="1" />
+        </RadialGradientBrush>
+
+        <!-- Trigger pill: brushed-metal body with a glassy dark track and the analog fill. -->
+        <LinearGradientBrush x:Key="TriggerMetalBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FF7D7D90" Offset="0" />
+            <GradientStop Color="#FF464653" Offset="0.2" />
+            <GradientStop Color="#FF1E1E26" Offset="0.52" />
+            <GradientStop Color="#FF343440" Offset="0.82" />
+            <GradientStop Color="#FF101015" Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="TriggerFillBrush" StartPoint="0,1" EndPoint="0,0">
+            <GradientStop Color="#FF1B57AC" Offset="0" />
+            <GradientStop Color="#FF4FA8F5" Offset="0.55" />
+            <GradientStop Color="#FFC4EEFF" Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="TriggerGlassBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#59FFFFFF" Offset="0" />
+            <GradientStop Color="#12FFFFFF" Offset="0.42" />
+            <GradientStop Color="#00000000" Offset="0.58" />
+        </LinearGradientBrush>
+
+        <!-- Shoulder bars / paddles / menu pills share one brushed-metal look. -->
+        <LinearGradientBrush x:Key="ShoulderMetalBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FF636374" Offset="0" />
+            <GradientStop Color="#FF383845" Offset="0.32" />
+            <GradientStop Color="#FF1C1C23" Offset="0.7" />
+            <GradientStop Color="#FF2B2B35" Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="AccentPressedBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FF79C2FF" Offset="0" />
+            <GradientStop Color="#FF2F6FB5" Offset="0.5" />
+            <GradientStop Color="#FF173F6B" Offset="1" />
+        </LinearGradientBrush>
+
+        <!-- ABXY: glossy domes, one radial gradient per letter. -->
+        <RadialGradientBrush x:Key="FaceYBrush" GradientOrigin="0.32,0.24" Center="0.5,0.56" RadiusX="0.72" RadiusY="0.72">
+            <GradientStop Color="#FFFFEDB0" Offset="0" />
+            <GradientStop Color="#FFE0AC1F" Offset="0.42" />
+            <GradientStop Color="#FFA66E06" Offset="0.8" />
+            <GradientStop Color="#FF553402" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="FaceABrush" GradientOrigin="0.32,0.24" Center="0.5,0.56" RadiusX="0.72" RadiusY="0.72">
+            <GradientStop Color="#FFBCF7B2" Offset="0" />
+            <GradientStop Color="#FF3FA13F" Offset="0.42" />
+            <GradientStop Color="#FF1F6B27" Offset="0.8" />
+            <GradientStop Color="#FF0C3A13" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="FaceXBrush" GradientOrigin="0.32,0.24" Center="0.5,0.56" RadiusX="0.72" RadiusY="0.72">
+            <GradientStop Color="#FFB6DCFF" Offset="0" />
+            <GradientStop Color="#FF2E6FD8" Offset="0.42" />
+            <GradientStop Color="#FF17458F" Offset="0.8" />
+            <GradientStop Color="#FF0A1F45" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="FaceBBrush" GradientOrigin="0.32,0.24" Center="0.5,0.56" RadiusX="0.72" RadiusY="0.72">
+            <GradientStop Color="#FFFFB4A6" Offset="0" />
+            <GradientStop Color="#FFC0392B" Offset="0.42" />
+            <GradientStop Color="#FF8A1F14" Offset="0.8" />
+            <GradientStop Color="#FF4A0C06" Offset="1" />
+        </RadialGradientBrush>
+
+        <RadialGradientBrush x:Key="FaceSpecularBrush" GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+            <GradientStop Color="#F2FFFFFF" Offset="0" />
+            <GradientStop Color="#4DFFFFFF" Offset="0.5" />
+            <GradientStop Color="#00FFFFFF" Offset="1" />
+        </RadialGradientBrush>
+
+        <!-- D-pad: beveled raised cross. -->
+        <LinearGradientBrush x:Key="DpadTopBrush" StartPoint="0.1,0" EndPoint="0.45,1">
+            <GradientStop Color="#FF636375" Offset="0" />
+            <GradientStop Color="#FF3C3C49" Offset="0.48" />
+            <GradientStop Color="#FF202028" Offset="1" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="DpadBevelBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#CCFFFFFF" Offset="0" />
+            <GradientStop Color="#00FFFFFF" Offset="0.42" />
+            <GradientStop Color="#A6000000" Offset="1" />
+        </LinearGradientBrush>
+
+        <RadialGradientBrush x:Key="DpadCenterBrush" GradientOrigin="0.42,0.35" Center="0.5,0.55" RadiusX="0.6" RadiusY="0.6">
+            <GradientStop Color="#FF33333E" Offset="0" />
+            <GradientStop Color="#FF15151A" Offset="0.55" />
+            <GradientStop Color="#FF07070A" Offset="1" />
+        </RadialGradientBrush>
+
+        <!-- Guide dome. -->
+        <RadialGradientBrush x:Key="GuideDomeBrush" GradientOrigin="0.34,0.26" Center="0.5,0.56" RadiusX="0.7" RadiusY="0.7">
+            <GradientStop Color="#FF5B5B6E" Offset="0" />
+            <GradientStop Color="#FF2A2A34" Offset="0.5" />
+            <GradientStop Color="#FF0E0E12" Offset="1" />
+        </RadialGradientBrush>
+
+        <DropShadowEffect x:Key="PadBodyShadow" Color="#FF000000" BlurRadius="24" ShadowDepth="9" Direction="270" Opacity="0.8" />
+
+        <Style x:Key="PanelBorder" TargetType="Border">
+            <Setter Property="Background" Value="#FF1E1E24" />
+            <Setter Property="BorderBrush" Value="#FF2E2E38" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="10" />
+        </Style>
+
+        <Style x:Key="PanelHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#FFB9D8FF" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="#FF8F8F9C" />
+            <Setter Property="Margin" Value="0,8,0,3" />
+        </Style>
+
+        <Style x:Key="FlatButton" TargetType="Button">
+            <Setter Property="Background" Value="#FF2C2C36" />
+            <Setter Property="BorderBrush" Value="#FF3C3C4A" />
+            <Setter Property="Foreground" Value="#FFE8E8EE" />
+            <Setter Property="Padding" Value="10,5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FF3A3A48" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#FF23232C" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SlotButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+            <Setter Property="Width" Value="82" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="4,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Background" Value="#FF2F6FB5" />
+                    <Setter Property="BorderBrush" Value="#FF7CC0FF" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LibraryListBox" TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="#FFDADAE2" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        </Style>
+
+        <!-- Gamepad hit areas: transparent click targets over the drawn artwork. They light up on
+             a real button press and show an accent ring/DropShadow on the selected control. -->
+        <ControlTemplate x:Key="PadRoundControl" TargetType="Button">
+            <Grid>
+                <Ellipse x:Name="Shape"
+                         Fill="Transparent"
+                         Stroke="Transparent"
+                         StrokeThickness="1.5" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                    <Setter TargetName="Shape" Property="Fill" Value="#552F6FB5" />
+                    <Setter TargetName="Shape" Property="Stroke" Value="#FF9CD3FF" />
+                    <Setter TargetName="Shape" Property="StrokeThickness" Value="2" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter TargetName="Shape" Property="Stroke" Value="#FF7CC0FF" />
+                    <Setter TargetName="Shape" Property="StrokeThickness" Value="2.5" />
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Shape" Property="Stroke" Value="#FFB9E2FF" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="PadRectControl" TargetType="Button">
+            <Grid>
+                <Rectangle x:Name="Shape"
+                           RadiusX="{Binding Radius}"
+                           RadiusY="{Binding Radius}"
+                           Fill="Transparent"
+                           Stroke="Transparent"
+                           StrokeThickness="1.5" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                    <Setter TargetName="Shape" Property="Fill" Value="#552F6FB5" />
+                    <Setter TargetName="Shape" Property="Stroke" Value="#FF9CD3FF" />
+                    <Setter TargetName="Shape" Property="StrokeThickness" Value="2" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter TargetName="Shape" Property="Stroke" Value="#FF7CC0FF" />
+                    <Setter TargetName="Shape" Property="StrokeThickness" Value="2.5" />
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Shape" Property="Stroke" Value="#FFB9E2FF" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style x:Key="PadControlButton" TargetType="Button">
+            <Setter Property="Template" Value="{StaticResource PadRectControl}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsRound}" Value="True">
+                    <Setter Property="Template" Value="{StaticResource PadRoundControl}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Non-blocking banner: missing ViGEmBus, API failure, ... -->
+        <Border Grid.Row="0"
+                Background="#FF352B17"
+                BorderBrush="#FF6E5626"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="10,7"
+                Margin="0,0,0,8"
+                Visibility="{Binding HasBanner, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="{Binding Banner}"
+                       TextWrapping="Wrap"
+                       Foreground="#FFF2D79A" />
+        </Border>
+
+        <!-- Top bar: device selector, slots, remap toggle, status. -->
+        <Border Grid.Row="1" Style="{StaticResource PanelBorder}" Margin="0,0,0,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="{DynamicResource L079}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           Foreground="#FFB9D9FF" />
+
+                <ComboBox Grid.Row="0" Grid.Column="1"
+                          Height="30"
+                          ItemsSource="{Binding Controllers}"
+                          SelectedItem="{Binding SelectedController, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayName" />
+
+                <Button Grid.Row="0" Grid.Column="2"
+                        Content="{DynamicResource L049}"
+                        Command="{Binding RefreshDevicesCommand}"
+                        Style="{StaticResource FlatButton}"
+                        Height="30"
+                        Margin="8,0,0,0" />
+
+                <ItemsControl Grid.Row="0" Grid.Column="3"
+                              ItemsSource="{Binding Slots}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Label}"
+                                    Style="{StaticResource SlotButton}"
+                                    Command="{Binding DataContext.SelectSlotCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ToggleButton Grid.Row="0" Grid.Column="4"
+                              Width="150"
+                              Height="44"
+                              IsChecked="{Binding RemapEnabled, Mode=TwoWay}"
+                              Cursor="Hand"
+                              ToolTip="{DynamicResource L057}">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Root"
+                                    CornerRadius="8"
+                                    Background="#FF3A2226"
+                                    BorderBrush="#FF6B3A3F"
+                                    BorderThickness="1">
+                                <TextBlock x:Name="Caption"
+                                           Text="{DynamicResource L092}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="#FFF0A0A0" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Root" Property="Background" Value="#FF1C3A26" />
+                                    <Setter TargetName="Root" Property="BorderBrush" Value="#FF4C8F5C" />
+                                    <Setter TargetName="Caption" Property="Text" Value="映射 ON" />
+                                    <Setter TargetName="Caption" Property="Foreground" Value="#FFA8E8B8" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="Opacity" Value="0.9" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock Text="{Binding StatusText}" Foreground="#FFB9D8FF" />
+                    <TextBlock Text="   ·   " Foreground="#FF4A4A56" />
+                    <TextBlock Text="{Binding CurrentConfigText}" Foreground="#FFDADAE2" />
+                    <TextBlock Text="   ·   " Foreground="#FF4A4A56" />
+                    <TextBlock Text="{Binding CurrentLayerText}" Foreground="#FFDADAE2" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Body: library / gamepad / bindings. -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="390" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Config library -->
+            <Border Grid.Column="0" Style="{StaticResource PanelBorder}" Margin="0,0,8,0">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{DynamicResource L137}" Style="{StaticResource PanelHeader}" />
+
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,6">
+                        <Button Content="{DynamicResource L049}"
+                                Command="{Binding Library.RefreshCommand}"
+                                Style="{StaticResource FlatButton}"
+                                Width="64" />
+                        <TextBlock Text="{Binding Library.CountText}"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"
+                                   FontSize="11"
+                                   Foreground="#FF8F8F9C" />
+                    </StackPanel>
+
+                    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                        <Button Content="{DynamicResource L067}"
+                                Click="OnImportConfig"
+                                Style="{StaticResource FlatButton}"
+                                Width="66"
+                                Margin="0,0,6,4"
+                                ToolTip="{DynamicResource L083}" />
+                        <Button Content="{DynamicResource L068}"
+                                Click="OnExportConfig"
+                                Style="{StaticResource FlatButton}"
+                                Width="66"
+                                Margin="0,0,6,4"
+                                ToolTip="{DynamicResource L085}" />
+<Button Content="{DynamicResource menu.exportlist}"
+                                Click="OnExportBindingList"
+                                Style="{StaticResource FlatButton}"
+                                Width="66"
+                                Margin="0,0,6,4"
+                                ToolTip="{DynamicResource L085}" />
+                        <Button Content="{DynamicResource L054}"
+                                Click="OnSaveAsPreset"
+                                Style="{StaticResource FlatButton}"
+                                Width="92"
+                                Margin="0,0,6,4"
+                                ToolTip="{DynamicResource L084}" />
+                    </WrapPanel>
+
+                    <TextBlock DockPanel.Dock="Bottom"
+                               Text="{Binding Library.Message}"
+                               TextWrapping="Wrap"
+                               FontSize="11"
+                               Margin="0,6,0,0"
+                               Foreground="#FFF0C070" />
+                    <TextBlock DockPanel.Dock="Bottom"
+                               Text="{Binding Library.RootPath}"
+                               TextTrimming="CharacterEllipsis"
+                               FontSize="10"
+                               Margin="0,6,0,0"
+                               ToolTip="{Binding Library.RootPath}"
+                               Foreground="#FF6F6F7C" />
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Library.Games}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,0,10">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#FF9FD3FF"
+                                                       Margin="0,0,0,2" />
+                                            <TextBlock Text="{DynamicResource L154}"
+                                                       FontSize="10"
+                                                       Foreground="#FF6F6F7C"
+                                                       Margin="6,2,0,0"
+                                                       Visibility="{Binding IsPreset, Converter={StaticResource BoolToVis}}" />
+                                        </StackPanel>
+                                        <ListBox ItemsSource="{Binding Profiles}"
+                                                 Style="{StaticResource LibraryListBox}"
+                                                 SelectionChanged="OnProfileSelected"
+                                                 MouseDoubleClick="OnProfileDoubleClick">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="{Binding IconPath}"
+                                                               Width="22"
+                                                               Height="22"
+                                                               Margin="0,0,7,0"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="{Binding HasIcon, Converter={StaticResource BoolToVis}}" />
+                                                        <StackPanel VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Name}" />
+                                                            <TextBlock Text="{Binding SubText}"
+                                                                       FontSize="10"
+                                                                       Foreground="#FF8F8F9C" />
+                                                            <TextBlock Text="{Binding Description}"
+                                                                       FontSize="10"
+                                                                       Foreground="#FF6F7D92"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       Visibility="{Binding Description, Converter={StaticResource NullToCollapsed}}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- Gamepad diagram -->
+            <Border Grid.Column="1" Style="{StaticResource PanelBorder}" Margin="0,0,8,0">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top">
+                        <TextBlock Text="{DynamicResource L082}" Style="{StaticResource PanelHeader}" />
+                        <!-- Which renderer is live: 3D, 2D fallback, or 2D forced by safe-graphics. -->
+                        <TextBlock x:Name="PadModeTag"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   FontSize="10"
+                                   Foreground="#FF6F6F7C"
+                                   Text="2D" />
+                    </Grid>
+                    <TextBlock DockPanel.Dock="Bottom"
+                               Text="{Binding Gamepad.SelectedControlCaption}"
+                               HorizontalAlignment="Center"
+                               Margin="0,4,0,0"
+                               Foreground="#FF9FD3FF" />
+                    <TextBlock DockPanel.Dock="Bottom"
+                               Text="{DynamicResource L109}"
+                               HorizontalAlignment="Center"
+                               FontSize="11"
+                               Foreground="#FF6F6F7C" />
+                    <Grid>
+                    <Viewbox x:Name="Pad2DView" Stretch="Uniform" Margin="4">
+                        <!-- Original vector artwork (420x300): body, wells, sticks, ABXY, d-pad,
+                             shoulders, triggers, guide, view/menu and P1-P4 paddles. -->
+                        <Grid Width="420" Height="300" DataContext="{Binding Gamepad}">
+                            <!-- Static artwork: the body and its lighting never change, so WPF caches
+                                 the whole layer once (including the body shadow) as a bitmap. -->
+                            <Canvas Width="420" Height="300" IsHitTestVisible="False"
+                                    CacheMode="BitmapCache">
+                                <!-- Soft contact shadow under the whole body (blurred ellipse). -->
+                                <Ellipse Canvas.Left="52" Canvas.Top="220" Width="316" Height="62" Opacity="0.9">
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush>
+                                            <GradientStop Color="#D9000000" Offset="0" />
+                                            <GradientStop Color="#66000000" Offset="0.55" />
+                                            <GradientStop Color="#00000000" Offset="1" />
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                    <Ellipse.Effect>
+                                        <BlurEffect Radius="15" />
+                                    </Ellipse.Effect>
+                                </Ellipse>
+
+                                <!-- Dark lower edge, offset down: reads as the body's thickness. -->
+                                <Path Data="{StaticResource PadBodyGeometry}" Fill="#FF050508" Opacity="0.95">
+                                    <Path.RenderTransform>
+                                        <TranslateTransform Y="5" />
+                                    </Path.RenderTransform>
+                                </Path>
+
+                                <!-- Body: top-lit gradient slab with a soft cast shadow. -->
+                                <Path Data="{StaticResource PadBodyGeometry}"
+                                      Fill="{StaticResource PadBodyBrush}"
+                                      Stroke="#FF07070A"
+                                      StrokeThickness="1.6"
+                                      Effect="{StaticResource PadBodyShadow}" />
+
+                                <!-- Lighting clipped to the silhouette: elliptical grip volumes,
+                                     crown sheen and the darker bottom edge. -->
+                                <Canvas Width="420" Height="300" Clip="{StaticResource PadBodyGeometry}">
+                                    <Ellipse Canvas.Left="56" Canvas.Top="148" Width="116" Height="124" Fill="{StaticResource GripHighlightBrush}" />
+                                    <Ellipse Canvas.Left="248" Canvas.Top="148" Width="116" Height="124" Fill="{StaticResource GripHighlightBrush}" />
+                                    <Ellipse Canvas.Left="120" Canvas.Top="56" Width="180" Height="54" Fill="{StaticResource GripHighlightBrush}" />
+                                    <Ellipse Canvas.Left="30" Canvas.Top="120" Width="360" Height="160" Fill="{StaticResource PadBottomShadeBrush}" />
+                                </Canvas>
+
+                                <!-- Inner highlight rim: a slightly scaled copy of the silhouette. -->
+                                <Path Data="{StaticResource PadBodyGeometry}"
+                                      Fill="Transparent"
+                                      Stroke="{StaticResource PadBodyRimBrush}"
+                                      StrokeThickness="1.4"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="0.985" ScaleY="0.972" />
+                                    </Path.RenderTransform>
+                                </Path>
+
+                                <!-- Recessed centre plate behind the guide cluster. -->
+                                <Ellipse Canvas.Left="148" Canvas.Top="84" Width="124" Height="80"
+                                         Fill="{StaticResource CenterPlateBrush}"
+                                         Stroke="#FF07070A"
+                                         StrokeThickness="1.4" />
+                                <Ellipse Canvas.Left="151" Canvas.Top="86" Width="118" Height="76"
+                                         Fill="Transparent"
+                                         Stroke="#33FFFFFF"
+                                         StrokeThickness="1" />
+                            </Canvas>
+
+                            <!-- Dynamic layer: controls whose properties change. These use render
+                                 transforms only and carry no Effect/Blur (safe for software rendering). -->
+                            <Canvas Width="420" Height="300" IsHitTestVisible="False">
+
+                                <!-- ================= LT / RT: metal pills + glass track + fill ============ -->
+                                <Grid Canvas.Left="78" Canvas.Top="12" Width="96" Height="26">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="13" RadiusY="13" Fill="#B3000000" Opacity="0.7" />
+                                    <Rectangle RadiusX="13" RadiusY="13"
+                                               Fill="{StaticResource TriggerMetalBrush}"
+                                               Stroke="#FF07070A"
+                                               StrokeThickness="1.4" />
+                                    <Grid Margin="6,5">
+                                        <Rectangle RadiusX="8" RadiusY="8" Fill="#FF06060A" Stroke="#FF000000" StrokeThickness="1" />
+                                        <Rectangle Margin="2" RadiusX="6" RadiusY="6"
+                                                   Fill="{StaticResource TriggerFillBrush}"
+                                                   RenderTransformOrigin="0.5,1">
+                                            <Rectangle.RenderTransform>
+                                                <ScaleTransform ScaleY="{Binding LT}" />
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
+                                        <Rectangle Margin="2" RadiusX="6" RadiusY="6" Fill="{StaticResource TriggerGlassBrush}" />
+                                    </Grid>
+                                    <TextBlock Text="LT"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               Foreground="#FFFFFFFF">
+                                    </TextBlock>
+                                </Grid>
+
+                                <Grid Canvas.Left="246" Canvas.Top="12" Width="96" Height="26">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="13" RadiusY="13" Fill="#B3000000" Opacity="0.7" />
+                                    <Rectangle RadiusX="13" RadiusY="13"
+                                               Fill="{StaticResource TriggerMetalBrush}"
+                                               Stroke="#FF07070A"
+                                               StrokeThickness="1.4" />
+                                    <Grid Margin="6,5">
+                                        <Rectangle RadiusX="8" RadiusY="8" Fill="#FF06060A" Stroke="#FF000000" StrokeThickness="1" />
+                                        <Rectangle Margin="2" RadiusX="6" RadiusY="6"
+                                                   Fill="{StaticResource TriggerFillBrush}"
+                                                   RenderTransformOrigin="0.5,1">
+                                            <Rectangle.RenderTransform>
+                                                <ScaleTransform ScaleY="{Binding RT}" />
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
+                                        <Rectangle Margin="2" RadiusX="6" RadiusY="6" Fill="{StaticResource TriggerGlassBrush}" />
+                                    </Grid>
+                                    <TextBlock Text="RT"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               Foreground="#FFFFFFFF">
+                                    </TextBlock>
+                                </Grid>
+
+                                <!-- ================= LB / RB: raised brushed-metal bars ================= -->
+                                <Grid Canvas.Left="72" Canvas.Top="42" Width="108" Height="20">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="9" RadiusY="9" Fill="#99000000" />
+                                    <Rectangle RadiusX="9" RadiusY="9" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding LB}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="3,2" RadiusX="7" RadiusY="7" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="LB"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <Grid Canvas.Left="240" Canvas.Top="42" Width="108" Height="20">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="9" RadiusY="9" Fill="#99000000" />
+                                    <Rectangle RadiusX="9" RadiusY="9" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RB}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="3,2" RadiusX="7" RadiusY="7" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="RB"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <!-- ================= D-pad: raised beveled cross ========================= -->
+                                <Path Data="M 99,182 L 121,182 L 121,193 L 132,193 L 132,215 L 121,215 L 121,226 L 99,226 L 99,215 L 88,215 L 88,193 L 99,193 Z"
+                                      Fill="#CC000000"
+                                      StrokeLineJoin="Round">
+                                    <Path.RenderTransform>
+                                        <TranslateTransform X="2" Y="3" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Path Data="M 99,182 L 121,182 L 121,193 L 132,193 L 132,215 L 121,215 L 121,226 L 99,226 L 99,215 L 88,215 L 88,193 L 99,193 Z"
+                                      Fill="{StaticResource DpadTopBrush}"
+                                      Stroke="#FF0A0A0E"
+                                      StrokeThickness="1.4"
+                                      StrokeLineJoin="Round" />
+                                <Path Data="M 99,182 L 121,182 L 121,193 L 132,193 L 132,215 L 121,215 L 121,226 L 99,226 L 99,215 L 88,215 L 88,193 L 99,193 Z"
+                                      Fill="Transparent"
+                                      Stroke="{StaticResource DpadBevelBrush}"
+                                      StrokeThickness="1"
+                                      StrokeLineJoin="Round"
+                                      RenderTransformOrigin="0.5,0.5">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="0.955" ScaleY="0.94" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Ellipse Canvas.Left="104" Canvas.Top="198" Width="12" Height="12"
+                                         Fill="{StaticResource DpadCenterBrush}"
+                                         Stroke="#FF07070A"
+                                         StrokeThickness="1" />
+
+                                <!-- ================= ABXY: glossy domes with specular ==================== -->
+                                <Grid Canvas.Left="297" Canvas.Top="80" Width="26" Height="26">
+                                    <Ellipse Margin="1,2,1,0" Fill="#B3000000" />
+                                    <Ellipse Fill="#FF09090C" Stroke="#FF040406" StrokeThickness="1" />
+                                    <Ellipse Margin="2" StrokeThickness="1">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource FaceYBrush}" />
+                                                <Setter Property="Stroke" Value="#66FFFFFF" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Y}" Value="True">
+                                                        <Setter Property="Stroke" Value="#FFFFFFFF" />
+                                                        <Setter Property="StrokeThickness" Value="1.8" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <Ellipse Margin="2" Fill="Transparent" Stroke="#59000000" StrokeThickness="1" />
+                                    <Ellipse Width="11" Height="7"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Top"
+                                             Margin="4.5,3.5,0,0"
+                                             Fill="{StaticResource FaceSpecularBrush}"
+                                             RenderTransformOrigin="0.5,0.5">
+                                        <Ellipse.RenderTransform>
+                                            <RotateTransform Angle="-22" />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    <TextBlock Text="Y"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontWeight="Bold"
+                                               Foreground="#FF1A1405" />
+                                </Grid>
+
+                                <Grid Canvas.Left="297" Canvas.Top="130" Width="26" Height="26">
+                                    <Ellipse Margin="1,2,1,0" Fill="#B3000000" />
+                                    <Ellipse Fill="#FF09090C" Stroke="#FF040406" StrokeThickness="1" />
+                                    <Ellipse Margin="2" StrokeThickness="1">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource FaceABrush}" />
+                                                <Setter Property="Stroke" Value="#66FFFFFF" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding A}" Value="True">
+                                                        <Setter Property="Stroke" Value="#FFFFFFFF" />
+                                                        <Setter Property="StrokeThickness" Value="1.8" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <Ellipse Margin="2" Fill="Transparent" Stroke="#59000000" StrokeThickness="1" />
+                                    <Ellipse Width="11" Height="7"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Top"
+                                             Margin="4.5,3.5,0,0"
+                                             Fill="{StaticResource FaceSpecularBrush}"
+                                             RenderTransformOrigin="0.5,0.5">
+                                        <Ellipse.RenderTransform>
+                                            <RotateTransform Angle="-22" />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    <TextBlock Text="A"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontWeight="Bold"
+                                               Foreground="#FFF2FFF0" />
+                                </Grid>
+
+                                <Grid Canvas.Left="272" Canvas.Top="105" Width="26" Height="26">
+                                    <Ellipse Margin="1,2,1,0" Fill="#B3000000" />
+                                    <Ellipse Fill="#FF09090C" Stroke="#FF040406" StrokeThickness="1" />
+                                    <Ellipse Margin="2" StrokeThickness="1">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource FaceXBrush}" />
+                                                <Setter Property="Stroke" Value="#66FFFFFF" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding X}" Value="True">
+                                                        <Setter Property="Stroke" Value="#FFFFFFFF" />
+                                                        <Setter Property="StrokeThickness" Value="1.8" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <Ellipse Margin="2" Fill="Transparent" Stroke="#59000000" StrokeThickness="1" />
+                                    <Ellipse Width="11" Height="7"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Top"
+                                             Margin="4.5,3.5,0,0"
+                                             Fill="{StaticResource FaceSpecularBrush}"
+                                             RenderTransformOrigin="0.5,0.5">
+                                        <Ellipse.RenderTransform>
+                                            <RotateTransform Angle="-22" />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    <TextBlock Text="X"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontWeight="Bold"
+                                               Foreground="#FFFFFFFF" />
+                                </Grid>
+
+                                <Grid Canvas.Left="322" Canvas.Top="105" Width="26" Height="26">
+                                    <Ellipse Margin="1,2,1,0" Fill="#B3000000" />
+                                    <Ellipse Fill="#FF09090C" Stroke="#FF040406" StrokeThickness="1" />
+                                    <Ellipse Margin="2" StrokeThickness="1">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource FaceBBrush}" />
+                                                <Setter Property="Stroke" Value="#66FFFFFF" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding B}" Value="True">
+                                                        <Setter Property="Stroke" Value="#FFFFFFFF" />
+                                                        <Setter Property="StrokeThickness" Value="1.8" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <Ellipse Margin="2" Fill="Transparent" Stroke="#59000000" StrokeThickness="1" />
+                                    <Ellipse Width="11" Height="7"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Top"
+                                             Margin="4.5,3.5,0,0"
+                                             Fill="{StaticResource FaceSpecularBrush}"
+                                             RenderTransformOrigin="0.5,0.5">
+                                        <Ellipse.RenderTransform>
+                                            <RotateTransform Angle="-22" />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                    <TextBlock Text="B"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontWeight="Bold"
+                                               Foreground="#FFFFFFFF" />
+                                </Grid>
+
+                                <!-- ================= Guide, View and Menu =============================== -->
+                                <Grid Canvas.Left="190" Canvas.Top="90" Width="40" Height="40">
+                                    <Ellipse Margin="1,2,1,0" Fill="#B3000000" />
+                                    <Ellipse StrokeThickness="1.6">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource GuideDomeBrush}" />
+                                                <Setter Property="Stroke" Value="#FF09090C" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Guide}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <Ellipse Margin="5" Fill="Transparent" Stroke="#40FFFFFF" StrokeThickness="1" />
+                                    <Ellipse Width="16" Height="16" Fill="{StaticResource StickCenterBrush}" Stroke="#FF08080B" StrokeThickness="1" />
+                                    <Ellipse Width="7" Height="4"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Top"
+                                             Margin="9,7,0,0"
+                                             Fill="{StaticResource FaceSpecularBrush}" />
+                                </Grid>
+
+                                <Grid Canvas.Left="166" Canvas.Top="133" Width="28" Height="18">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="9" RadiusY="9" Fill="#99000000" />
+                                    <Rectangle RadiusX="9" RadiusY="9" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding View}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="2,2" RadiusX="7" RadiusY="7" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="View"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="7"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <Grid Canvas.Left="226" Canvas.Top="133" Width="28" Height="18">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="9" RadiusY="9" Fill="#99000000" />
+                                    <Rectangle RadiusX="9" RadiusY="9" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Menu}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="2,2" RadiusX="7" RadiusY="7" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="Menu"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="7"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <!-- ================= Left stick: deep well + raised translating cap ===== -->
+                                <Grid Canvas.Left="86" Canvas.Top="88" Width="84" Height="84">
+                                    <Ellipse Fill="{StaticResource StickWellBrush}" Stroke="#FF06060A" StrokeThickness="2" />
+                                    <Ellipse Margin="1.5" Fill="Transparent" Stroke="{StaticResource StickWellRimBrush}" StrokeThickness="2" />
+                                    <Ellipse Margin="7" Fill="Transparent" Stroke="#73000000" StrokeThickness="4" />
+                                    <Grid Width="52" Height="52" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.RenderTransform>
+                                            <TranslateTransform X="{Binding LeftStickOffsetX}" Y="{Binding LeftStickOffsetY}" />
+                                        </Grid.RenderTransform>
+                                        <Ellipse Fill="{StaticResource StickCapBrush}"
+                                                 Stroke="#FF6E6E80"
+                                                 StrokeThickness="1.2">
+                                        </Ellipse>
+                                        <Ellipse Margin="2.5" Fill="Transparent" Stroke="#59000000" StrokeThickness="1" />
+                                        <Ellipse Width="30" Height="30"
+                                                 Fill="{StaticResource StickCenterBrush}"
+                                                 Stroke="#FF08080B"
+                                                 StrokeThickness="1.2" />
+                                        <Ellipse Width="11" Height="11" Fill="#FF07070A" Opacity="0.75" />
+                                        <Ellipse Width="18" Height="10"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Margin="7,6,0,0"
+                                                 Fill="{StaticResource StickCapHighlightBrush}"
+                                                 RenderTransformOrigin="0.5,0.5">
+                                            <Ellipse.RenderTransform>
+                                                <RotateTransform Angle="-28" />
+                                            </Ellipse.RenderTransform>
+                                        </Ellipse>
+                                        <Ellipse Width="5" Height="4"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Margin="9.5,9,0,0"
+                                                 Fill="#E6FFFFFF" />
+                                    </Grid>
+                                    <Ellipse StrokeThickness="2">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="Transparent" />
+                                                <Setter Property="Stroke" Value="Transparent" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding LS}" Value="True">
+                                                        <Setter Property="Stroke" Value="#FF7CC0FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                </Grid>
+
+                                <!-- ================= Right stick ==================================== -->
+                                <Grid Canvas.Left="252" Canvas.Top="156" Width="80" Height="80">
+                                    <Ellipse Fill="{StaticResource StickWellBrush}" Stroke="#FF06060A" StrokeThickness="2" />
+                                    <Ellipse Margin="1.5" Fill="Transparent" Stroke="{StaticResource StickWellRimBrush}" StrokeThickness="2" />
+                                    <Ellipse Margin="7" Fill="Transparent" Stroke="#73000000" StrokeThickness="4" />
+                                    <Grid Width="52" Height="52" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.RenderTransform>
+                                            <TranslateTransform X="{Binding RightStickOffsetX}" Y="{Binding RightStickOffsetY}" />
+                                        </Grid.RenderTransform>
+                                        <Ellipse Fill="{StaticResource StickCapBrush}"
+                                                 Stroke="#FF6E6E80"
+                                                 StrokeThickness="1.2">
+                                        </Ellipse>
+                                        <Ellipse Margin="2.5" Fill="Transparent" Stroke="#59000000" StrokeThickness="1" />
+                                        <Ellipse Width="30" Height="30"
+                                                 Fill="{StaticResource StickCenterBrush}"
+                                                 Stroke="#FF08080B"
+                                                 StrokeThickness="1.2" />
+                                        <Ellipse Width="11" Height="11" Fill="#FF07070A" Opacity="0.75" />
+                                        <Ellipse Width="18" Height="10"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Margin="7,6,0,0"
+                                                 Fill="{StaticResource StickCapHighlightBrush}"
+                                                 RenderTransformOrigin="0.5,0.5">
+                                            <Ellipse.RenderTransform>
+                                                <RotateTransform Angle="-28" />
+                                            </Ellipse.RenderTransform>
+                                        </Ellipse>
+                                        <Ellipse Width="5" Height="4"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Top"
+                                                 Margin="9.5,9,0,0"
+                                                 Fill="#E6FFFFFF" />
+                                    </Grid>
+                                    <Ellipse StrokeThickness="2">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="Transparent" />
+                                                <Setter Property="Stroke" Value="Transparent" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RS}" Value="True">
+                                                        <Setter Property="Stroke" Value="#FF7CC0FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                </Grid>
+
+                                <!-- ================= Back paddles: small raised tabs ================= -->
+                                <Grid Canvas.Left="120" Canvas.Top="258" Width="42" Height="16">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="5" RadiusY="5" Fill="#99000000" />
+                                    <Rectangle RadiusX="5" RadiusY="5" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding P1}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="2,2" RadiusX="4" RadiusY="4" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="P1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="8"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <Grid Canvas.Left="166" Canvas.Top="264" Width="42" Height="16">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="5" RadiusY="5" Fill="#99000000" />
+                                    <Rectangle RadiusX="5" RadiusY="5" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding P2}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="2,2" RadiusX="4" RadiusY="4" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="P2"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="8"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <Grid Canvas.Left="212" Canvas.Top="264" Width="42" Height="16">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="5" RadiusY="5" Fill="#99000000" />
+                                    <Rectangle RadiusX="5" RadiusY="5" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding P3}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="2,2" RadiusX="4" RadiusY="4" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="P3"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="8"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+
+                                <Grid Canvas.Left="258" Canvas.Top="258" Width="42" Height="16">
+                                    <Rectangle Margin="1,2,0,0" RadiusX="5" RadiusY="5" Fill="#99000000" />
+                                    <Rectangle RadiusX="5" RadiusY="5" StrokeThickness="1.2">
+                                        <Rectangle.Style>
+                                            <Style TargetType="Rectangle">
+                                                <Setter Property="Fill" Value="{StaticResource ShoulderMetalBrush}" />
+                                                <Setter Property="Stroke" Value="#FF0A0A0E" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding P4}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource AccentPressedBrush}" />
+                                                        <Setter Property="Stroke" Value="#FF9CD3FF" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Rectangle.Style>
+                                    </Rectangle>
+                                    <Rectangle Margin="2,2" RadiusX="4" RadiusY="4" Fill="{StaticResource TriggerGlassBrush}" />
+                                    <TextBlock Text="P4"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="8"
+                                               FontWeight="Bold"
+                                               Foreground="#FFE8E8EE" />
+                                </Grid>
+                            </Canvas>
+
+                            <!-- Click layer: transparent hit areas that select a control. -->
+                            <ItemsControl ItemsSource="{Binding Controls}"
+                                          Width="420"
+                                          Height="300"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Top">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Width="{Binding Width}"
+                                                Height="{Binding Height}"
+                                                ToolTip="{Binding Tooltip}"
+                                                Style="{StaticResource PadControlButton}"
+                                                Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                        </Grid>
+                    </Viewbox>
+
+                    <!-- Procedural 3D controller. Collapsed by default: the code-behind shows it when
+                         the preference is on, the scene built successfully and safe-graphics is
+                         absent; otherwise the 2D vector pad above stays visible. -->
+                    <views:Gamepad3DView x:Name="Pad3DView"
+                                         DataContext="{Binding Gamepad}"
+                                         Visibility="Collapsed" />
+
+                    <!-- Neutral hint when the host reports no controller. -->
+                    <Border DataContext="{Binding Gamepad}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,2"
+                            Padding="10,4"
+                            CornerRadius="10"
+                            Background="#E61E1E24"
+                            BorderBrush="#FF3C3C4A"
+                            BorderThickness="1"
+                            IsHitTestVisible="False"
+                            Visibility="{Binding ShowConnectionHint, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding ConnectionHint}"
+                                   FontSize="11"
+                                   Foreground="#FF9FD3FF" />
+                    </Border>
+                    </Grid>
+                </DockPanel>
+            </Border>
+
+            <!-- Binding editor -->
+            <Border Grid.Column="2" Style="{StaticResource PanelBorder}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{DynamicResource L122}" Style="{StaticResource PanelHeader}" />
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="{Binding BindingEditor.SelectedControlCaption}"
+                                       FontSize="15"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding BindingEditor.ProfileName}"
+                                       FontSize="11"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="#FF8F8F9C" />
+                            <TextBlock Text="{Binding BindingEditor.CurrentBindingText}"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap"
+                                       Foreground="#FF9FD3FF" />
+
+                            <TextBlock Text="{DynamicResource L123}" Style="{StaticResource FieldLabel}" />
+                            <ComboBox ItemsSource="{Binding BindingEditor.Layers}"
+                                      SelectedItem="{Binding BindingEditor.SelectedLayer, Mode=TwoWay}"
+                                      DisplayMemberPath="Label" />
+
+                            <TextBlock Text="{DynamicResource L108}" Style="{StaticResource FieldLabel}" />
+                            <ComboBox ItemsSource="{Binding BindingEditor.Activators}"
+                                      SelectedItem="{Binding BindingEditor.SelectedActivator, Mode=TwoWay}"
+                                      DisplayMemberPath="Label" />
+
+                            <TextBlock Text="{DynamicResource L093}" Style="{StaticResource FieldLabel}" />
+                            <ComboBox ItemsSource="{Binding BindingEditor.Targets}"
+                                      SelectedItem="{Binding BindingEditor.SelectedTarget, Mode=TwoWay}"
+                                      DisplayMemberPath="Label" />
+
+                            <!-- Keyboard target -->
+                            <StackPanel>
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding BindingEditor.SelectedTarget.Kind}" Value="Keyboard">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource L145}" Style="{StaticResource FieldLabel}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="{DynamicResource L089}"
+                                            Click="OnCaptureKey"
+                                            Style="{StaticResource FlatButton}"
+                                            Width="92" />
+                                    <TextBlock Text="{Binding BindingEditor.KeyboardKeyText}"
+                                               VerticalAlignment="Center"
+                                               Margin="8,0,0,0"
+                                               Foreground="#FFB8E0FF" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Mouse target -->
+                            <StackPanel>
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding BindingEditor.SelectedTarget.Kind}" Value="Mouse">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource L153}" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{Binding BindingEditor.MouseButtonOptions}"
+                                          SelectedItem="{Binding BindingEditor.SelectedMouseButton, Mode=TwoWay}"
+                                          DisplayMemberPath="Label" />
+                            </StackPanel>
+
+                            <!-- Gamepad target -->
+                            <StackPanel>
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding BindingEditor.SelectedTarget.Kind}" Value="Gamepad">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <TextBlock Text="{DynamicResource L081}" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{Binding BindingEditor.GamepadTargetOptions}"
+                                          SelectedItem="{Binding BindingEditor.SelectedGamepadTarget, Mode=TwoWay}"
+                                          DisplayMemberPath="Label" />
+                            </StackPanel>
+
+                            <TextBlock Text="{DynamicResource L125}" Style="{StaticResource FieldLabel}" />
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Content="Turbo"
+                                          IsChecked="{Binding BindingEditor.IsTurbo, Mode=TwoWay}"
+                                          Foreground="#FFDADAE2"
+                                          Margin="0,0,18,0" />
+                                <CheckBox Content="Toggle"
+                                          IsChecked="{Binding BindingEditor.IsToggle, Mode=TwoWay}"
+                                          Foreground="#FFDADAE2" />
+                            </StackPanel>
+
+                            <TextBlock Text="{DynamicResource L017}" Style="{StaticResource FieldLabel}" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{DynamicResource L103}"
+                                           VerticalAlignment="Center"
+                                           FontSize="11"
+                                           Foreground="#FF8F8F9C" />
+                                <TextBox Width="52"
+                                         Margin="6,0,12,0"
+                                         Text="{Binding BindingEditor.TurboTimes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="{DynamicResource L147}"
+                                           VerticalAlignment="Center"
+                                           FontSize="11"
+                                           Foreground="#FF8F8F9C" />
+                                <TextBox Width="60"
+                                         Margin="6,0,0,0"
+                                         Text="{Binding BindingEditor.TurboPause, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <CheckBox Content="{DynamicResource L021}"
+                                      IsChecked="{Binding BindingEditor.TurboMacro, Mode=TwoWay}"
+                                      Foreground="#FFDADAE2"
+                                      Margin="0,8,0,0" />
+
+                            <TextBlock Text="{DynamicResource L065}" Style="{StaticResource FieldLabel}" />
+                            <Button Content="{Binding BindingEditor.MacroButtonText}"
+                                    Click="OnEditMacro"
+                                    Style="{StaticResource FlatButton}"
+                                    HorizontalAlignment="Left"
+                                    Width="170" />
+                            <TextBlock Text="{DynamicResource L097}"
+                                       TextWrapping="Wrap"
+                                       FontSize="10"
+                                       Foreground="#FF6F6F7C"
+                                       Margin="0,4,0,0" />
+
+                            <TextBlock Text="{DynamicResource L132}" Style="{StaticResource FieldLabel}" />
+                            <ComboBox ItemsSource="{Binding BindingEditor.Layers}"
+                                      SelectedItem="{Binding BindingEditor.JumpToLayer, Mode=TwoWay}"
+                                      DisplayMemberPath="Label" />
+
+                            <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                <Button Content="{DynamicResource L032}"
+                                        Command="{Binding SaveBindingCommand}"
+                                        Style="{StaticResource FlatButton}"
+                                        Width="100" />
+                                <Button Content="{DynamicResource L106}"
+                                        Command="{Binding ClearBindingCommand}"
+                                        Style="{StaticResource FlatButton}"
+                                        Width="100"
+                                        Margin="8,0,0,0" />
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding BindingEditor.Message}"
+                                       Margin="0,8,0,0"
+                                       TextWrapping="Wrap"
+                                       FontSize="11"
+                                       Foreground="#FFF0C070" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <!-- Status bar -->
+        <Border Grid.Row="3" Style="{StaticResource PanelBorder}" Margin="0,8,0,0" Padding="10,6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="{Binding InlineMessage}"
+                           TextWrapping="Wrap"
+                           Foreground="#FFF0C070" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="{DynamicResource L046}"
+                            Click="OnDeleteProfile"
+                            Style="{StaticResource FlatButton}"
+                            Margin="0,0,10,0"
+                            ToolTip="{DynamicResource L048}" />
+                    <Button Content="{DynamicResource L149}"
+                            Click="OnGyroCalibration"
+                            Style="{StaticResource FlatButton}"
+                            Margin="0,0,10,0"
+                            ToolTip="{DynamicResource L010}" />
+                    <Button Content="{DynamicResource L035}"
+                            Click="OnPreferences"
+                            Style="{StaticResource FlatButton}"
+                            Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding ApiStatus}"
+                               Foreground="#FF6F6F7C"
+                               FontSize="11"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

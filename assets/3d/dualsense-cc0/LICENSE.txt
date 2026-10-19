@@ -1,0 +1,47 @@
+PadShift 3D controller model - provenance and licence
+====================================================
+
+Model:        Sony DualSense (PlayStation 5) controller
+Author:       CasperH2O (3DControllerModels, used by Handheld Companion)
+Source page:  https://github.com/CasperH2O/3DControllerModels
+Direct file:  https://raw.githubusercontent.com/CasperH2O/3DControllerModels/main/Models/Sony%20DualSense.blend
+Licence:      CC0 1.0 Universal (Public Domain Dedication)
+Licence deed: https://creativecommons.org/publicdomain/zero/1.0/
+Licence text: https://github.com/CasperH2O/3DControllerModels/blob/main/LICENSE
+Downloaded:   2026-10-18
+Original SHA-256 (source.blend):
+              C13BCA59D16DF27FFC784961699CB2D2836F12ECE59E125D7EDEDBBAE4674647
+Converted OBJ SHA-256 (dualsense.obj):
+              0F612206F2B759A7B5B85E497B56C5447D814E1AC9FFEA5BFB856A9D76B32C1F
+
+Attribution is not required by CC0. The author and licence are nevertheless credited in
+PadShift's Preferences -> 关于 (About) tab.
+
+Why this model replaced the previous Microsoft Xbox One asset
+-------------------------------------------------------------
+The Xbox One asset models its "LeftThumb"/"RightThumb" objects as the recessed stick wells
+(shallow bowls), so PadShift had to hide them on the static shell and overlay procedural
+caps. The DualSense asset models real stick caps (dished top + cylindrical wall + tapered
+shaft, ~1.7k triangles each), which tilt directly and look correct.
+
+Conversion performed for PadShift
+----------------------------------
+The .blend was opened with bpy 5.0.1 (headless) by
+tools/model-export-dualsense.py. To re-run the conversion, create a Python 3.11 venv in
+tools/model-work and install bpy (uv venv --python 3.11 && uv pip install bpy). The script:
+  * applies each object's world transform and a collapse-decimate pass (34k triangles from
+    the 118k-triangle CAD source), leaving tiny button legends untouched;
+  * maps the model's named objects to PadShift controls with reWASD's Xbox-convention
+    semantics: B1/B1Button/B1ButtonSymbol -> A (cross, bottom), B2 -> B (circle, right),
+    B3 -> X (square, left), B4 -> Y (triangle, top), LeftThumb/RightThumb ->
+    StickLeft/StickRight, DPad* (+Cover/Arrow) -> Dpad*, shoulders, triggers,
+    Start -> Menu, Back -> View, Special -> Guide; decorations (LEDs, light bar, ports,
+    joystick rings) stay on the Body;
+  * converts Blender's Z-up space to PadShift's Y-up space without mirroring, so the
+    standard DualSense layout faces the camera;
+  * writes one MTL colour per control and per-corner normals (smooth curves, crisp edges).
+
+Scene budget: ~34k triangles, target width 29 scene units. No textures are used.
+
+Raw source: source.blend (kept here unchanged) + dualsense.obj + dualsense.mtl.
+The export script lives in tools/model-export-dualsense.py in the repository.

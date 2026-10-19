@@ -1,0 +1,51 @@
+<Window x:Class="PadShift.App.Views.RadialMenuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource L075}"
+        Width="440"
+        Height="440"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStartupLocation="Manual"
+        UseLayoutRounding="True"
+        KeyDown="OnKeyDown"
+        MouseMove="OnMouseMove"
+        MouseLeftButtonUp="OnMouseLeftButtonUp">
+    <Canvas x:Name="RootCanvas" Width="440" Height="440" Background="Transparent">
+        <Canvas x:Name="SectorCanvas" Width="440" Height="440" IsHitTestVisible="False" />
+
+        <Border x:Name="CenterPlate"
+                Canvas.Left="162"
+                Canvas.Top="162"
+                Width="116"
+                Height="116"
+                CornerRadius="58"
+                Background="#E61A1A22"
+                BorderBrush="#FF46506A"
+                BorderThickness="1.5"
+                IsHitTestVisible="False">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock x:Name="CenterLabel"
+                           Text="{DynamicResource L075}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="#FFF2F6FF"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           MaxWidth="100" />
+                <TextBlock x:Name="CenterHint"
+                           Text="{DynamicResource L118}"
+                           FontSize="9"
+                           Foreground="#FF8F97AB"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           MaxWidth="100"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </Border>
+    </Canvas>
+</Window>

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PadShift.Api/PadShift.Api.csproj" />
+    <Project Path="src/PadShift.App/PadShift.App.csproj" />
+    <Project Path="src/PadShift.Cli/PadShift.Cli.csproj" />
+    <Project Path="src/PadShift.Core/PadShift.Core.csproj" />
+    <Project Path="src/PadShift.Engine/PadShift.Engine.csproj" />
+    <Project Path="src/PadShift.Input/PadShift.Input.csproj" />
+    <Project Path="src/PadShift.Output/PadShift.Output.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PadShift.Tests/PadShift.Tests.csproj" />
+  </Folder>
+</Solution>

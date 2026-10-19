@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 3,
+  "appVersion": "5.7.0",
+  "config": {
+    "appName": "Fortnite",
+    "comment": "Custom configuration to play Fortnite game",
+    "minTimeUnit": 1,
+    "author": "reWASD_team",
+    "processNames": [
+      "FortniteLauncher.exe",
+      "FortniteClient-Win64-Shipping.exe",
+      "FortniteClient-Win32-Shipping.exe",
+      "FortniteClient-Win64-Shipping_BE.exe",
+      "FortniteClient-Win64-Shipping_EAC.exe",
+      "EasyAntiCheat_Setup.exe",
+      "lghub.exe",
+      "iCUE.exe",
+      "EpicGamesLauncher.exe",
+      "EpicWebHelper.exe",
+      "Keys2XInput.exe",
+      "wooting-double-movement.exe",
+      "GameBarPresenceWriter.exe"
+    ]
+  },
+  "devices": {
+    "groups": [
+      {
+        "id": 1,
+        "name": "keyboard"
+      }
+    ],
+    "hardware": [
+      {
+        "groupId": 1,
+        "id": 11,
+        "name": "keyboard",
+        "type": "standard"
+      }
+    ],
+    "virtual": {
+      "gamepads": [
+        {
+          "id": 1,
+          "type": "ds4",
+          "default": {
+            "sticks": [
+              {
+                "name": "left",
+                "initialDeflection": 32568,
+                "initialSpeed": 16
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "shifts": [
+    {
+      "id": 1,
+      "type": "toggle",
+      "set": [
+        {
+          "deviceId": 11,
+          "buttonId": 219,
+          "description": "DIK_LWIN"
+        }
+      ],
+      "unheritableMasks": [
+        1,
+        2
+      ]
+    }
+  ],
+  "masks": [
+    {
+      "id": 1,
+      "set": [
+        {
+          "deviceId": 11,
+          "buttonId": 30,
+          "description": "DIK_A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "set": [
+        {
+          "deviceId": 11,
+          "buttonId": 32,
+          "description": "DIK_D"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "set": [
+        {
+          "deviceId": 11,
+          "buttonId": 219,
+          "description": "DIK_LWIN"
+        }
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "condition": {
+        "mask": {
+          "id": 1,
+          "activator": {
+            "type": "single",
+            "mode": "hold_until_release"
+          }
+        }
+      },
+      "macros": [
+        {
+          "gamepad": {
+            "id": 1,
+            "buttonId": 42,
+            "description": "LeftStickLeft",
+            "absolute": true,
+            "value": 32767
+          }
+        }
+      ]
+    },
+    {
+      "condition": {
+        "mask": {
+          "id": 2,
+          "activator": {
+            "type": "single",
+            "mode": "hold_until_release"
+          }
+        }
+      },
+      "macros": [
+        {
+          "gamepad": {
+            "id": 1,
+            "buttonId": 43,
+            "description": "LeftStickRight",
+            "absolute": true,
+            "value": 32767
+          }
+        }
+      ]
+    },
+    {
+      "condition": {
+        "hardware": {
+          "deviceId": 11,
+          "buttonId": 219,
+          "description": "DIK_LWIN"
+        }
+      },
+      "hardware": {
+        "unmap": true
+      }
+    }
+  ]
+}

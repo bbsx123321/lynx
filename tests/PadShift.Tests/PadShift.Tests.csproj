@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- windows TFM: the suite also covers the WPF client's ViewModels (PadShift.App). -->
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <!-- The WindowsDesktop SDK trims the implicit-usings set; the suite needs these two. -->
+    <Using Include="System.IO" />
+    <Using Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Assets\**\*.rewasd" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PadShift.Api\PadShift.Api.csproj" />
+    <ProjectReference Include="..\..\src\PadShift.App\PadShift.App.csproj" />
+    <ProjectReference Include="..\..\src\PadShift.Cli\PadShift.Cli.csproj" />
+    <ProjectReference Include="..\..\src\PadShift.Core\PadShift.Core.csproj" />
+    <ProjectReference Include="..\..\src\PadShift.Engine\PadShift.Engine.csproj" />
+  </ItemGroup>
+
+</Project>
