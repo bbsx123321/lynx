@@ -9,8 +9,8 @@ namespace PadShift.App.ViewModels;
 
 /// <summary>
 /// Scans the profiles root for <c>**\*.rewasd</c> and groups the files by their top-level folder,
-/// which is how a the reference tool library is organised: one folder per game, one file per config.
-/// When the sibling <c>Presets</c> folder exists (the the reference tool layout) its files are shown as the
+/// which is how a the v2.6 protocol library is organised: one folder per game, one file per config.
+/// When the sibling <c>Presets</c> folder exists (the the v2.6 protocol layout) its files are shown as the
 /// 「预设」 group and can be applied with the same double-click as a game config.
 /// </summary>
 public sealed class ConfigLibraryViewModel : ObservableObject
@@ -154,7 +154,7 @@ public sealed class ConfigLibraryViewModel : ObservableObject
 
     private static ProfileItem CreateItem(string file, string game)
     {
-        // 游戏封面遵循 the reference tool 约定：游戏目录下的 IcoGame.png。
+        // 游戏封面遵循 the v2.6 protocol 约定：游戏目录下的 IcoGame.png。
         string? icon = null;
         try
         {

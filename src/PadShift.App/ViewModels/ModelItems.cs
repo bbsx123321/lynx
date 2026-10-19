@@ -126,7 +126,7 @@ public sealed record TargetOption(BindingTargetKind Kind, string Label);
 /// <summary>Mouse button target (1 = left, 2 = right, 3 = middle, 4/5 = side buttons).</summary>
 public sealed record MouseButtonOption(int ButtonId, string Label);
 
-/// <summary>Virtual gamepad button target. Ids use the the reference tool <c>GamepadButton</c> numbering.</summary>
+/// <summary>Virtual gamepad button target. Ids use the the v2.6 protocol <c>GamepadButton</c> numbering.</summary>
 public sealed record GamepadTargetOption(long ButtonId, string Label);
 
 /// <summary>Layer choice. <see cref="Layer"/> 0 is the main layer; 1..12 are shift layers.</summary>
@@ -135,7 +135,7 @@ public sealed record LayerOption(int Layer, string Label)
     public static LayerOption Main { get; } = new(0, "主层");
 }
 
-/// <summary>Human-readable names for the the reference tool gamepad button ids used by this client.</summary>
+/// <summary>Human-readable names for the the v2.6 protocol gamepad button ids used by this client.</summary>
 public static class GamepadButtons
 {
     public const long A = 1, B = 2, X = 3, Y = 4;

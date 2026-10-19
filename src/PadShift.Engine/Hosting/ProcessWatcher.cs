@@ -343,7 +343,7 @@ internal static class ProcessNameUtility
 {
     /// <summary>
     /// Reduce a process name to a comparable key: strip any directory part, trim quotes, and
-    /// add the implicit <c>.exe</c> when the name has no extension (the reference tool profiles normally
+    /// add the implicit <c>.exe</c> when the name has no extension (the v2.6 protocol profiles normally
     /// store <c>Game.exe</c> while <see cref="Process.ProcessName"/> omits the extension).
     /// </summary>
     public static string Normalize(string? name)

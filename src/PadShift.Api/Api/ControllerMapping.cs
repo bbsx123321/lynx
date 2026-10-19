@@ -2,7 +2,7 @@ using PadShift.Core.Host;
 
 namespace PadShift.Api;
 
-/// <summary>把 <see cref="HostController"/> / 文件路径映射成 the reference tool 形状的 DTO。</summary>
+/// <summary>把 <see cref="HostController"/> / 文件路径映射成 the v2.6 protocol 形状的 DTO。</summary>
 public static class ControllerMapping
 {
     public const string PeripheralControllerDataType = "PeripheralController";

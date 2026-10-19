@@ -8,7 +8,7 @@ using Xunit;
 namespace PadShift.Tests;
 
 /// <summary>
-/// 往返测试：真实 .rewasd（the reference config tool 导出的用户配置）读入 → 写出 → 结构必须等价。
+/// 往返测试：真实 .rewasd（the v2.6 protocol 导出的用户配置）读入 → 写出 → 结构必须等价。
 /// 夹具在 Assets/ 下，来自参考实现的配置库（只读副本）。
 /// </summary>
 public class ProfileRoundTripTests

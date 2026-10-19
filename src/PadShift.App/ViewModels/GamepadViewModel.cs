@@ -232,7 +232,7 @@ public sealed class GamepadViewModel : ObservableObject, IDisposable
         ControlSelected?.Invoke(this, control);
     }
 
-    /// <summary>Selects by the reference tool button id; returns false when the pad has no such control.</summary>
+    /// <summary>Selects by the v2.6 protocol button id; returns false when the pad has no such control.</summary>
     public bool SelectByButtonId(long buttonId)
     {
         foreach (GamepadControlViewModel candidate in Controls)

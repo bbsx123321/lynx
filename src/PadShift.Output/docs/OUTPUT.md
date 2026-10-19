@@ -2,7 +2,7 @@
 
 This folder implements the output half of PadShift: it takes an `OutputIntent` from the engine and
 turns it into real keyboard/mouse events and/or an emulated gamepad. It is a clean-room
-implementation; it contains no the reference tool code.
+implementation; it contains no the v2.6 protocol code.
 
 ```
 PadShift.Engine
@@ -206,7 +206,7 @@ dependency-injection boundary.
 ## Build verification
 
 ```powershell
-cd O:\package\obj\newobj2\the reference tool
+cd O:\package\obj\newobj2\the v2.6 protocol
 dotnet build src/PadShift.Output/PadShift.Output.csproj -v q
 ```
 

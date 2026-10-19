@@ -5,7 +5,7 @@ public static class HelpText
 {
     public const string Text =
         """
-        PadShift 命令行工具（协议 v2.6，与 the reference tool CLI 对齐）
+        PadShift 命令行工具（协议 v2.6，与 the v2.6 protocol CLI 对齐）
 
         用法：
           PadShift.Cli apply --config <路径> [--slot N] [--controller <GUID>] [--port <端口>]

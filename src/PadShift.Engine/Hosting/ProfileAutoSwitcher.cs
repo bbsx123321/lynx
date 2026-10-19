@@ -9,7 +9,7 @@ using PadShift.Core.Profile;
 namespace PadShift.Engine.Hosting;
 
 /// <summary>
-/// the reference tool 的「每游戏进程关联/自动检测」：把每个 profile 的 <c>config.processNames</c> 建成
+/// the v2.6 protocol 的「每游戏进程关联/自动检测」：把每个 profile 的 <c>config.processNames</c> 建成
 /// 「进程名 → profile 路径」索引，监听 <see cref="ProcessWatcher"/> 的启动/退出事件，
 /// 在游戏启动时把匹配的 profile 应用到当前槽位，在游戏退出时恢复到用户手动应用过的
 /// 「默认」profile。
@@ -518,7 +518,7 @@ public sealed class ProfileAutoSwitcher : IDisposable
         }
     }
 
-    /// <summary>Folder that directly contains the profile (the reference tool stores one folder per game).</summary>
+    /// <summary>Folder that directly contains the profile (the v2.6 protocol stores one folder per game).</summary>
     private static string ProfileFolderName(string profilePath)
     {
         try

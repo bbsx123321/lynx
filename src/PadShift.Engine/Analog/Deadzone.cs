@@ -3,7 +3,7 @@ using System;
 namespace PadShift.Engine.Analog;
 
 /// <summary>
-/// the reference tool-style deadzone <b>recalibration</b> (not clipping). Reproduces
+/// the v2.6 protocol-style deadzone <b>recalibration</b> (not clipping). Reproduces
 /// <c>MacroCompiler.PrepareDeflectionPointsForCompiler</c> exactly:
 /// <c>sign * (dz + |v| * (32768 - dz) / 32768)</c>, integer division, clamped to the signed 16-bit range.
 /// </summary>

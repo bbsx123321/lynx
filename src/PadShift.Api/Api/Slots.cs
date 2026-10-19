@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace PadShift.Api;
 
-/// <summary>the reference tool 槽位枚举；线上始终发名字字符串（"Slot1".."Slot4"），不发数字。</summary>
+/// <summary>the v2.6 protocol 槽位枚举；线上始终发名字字符串（"Slot1".."Slot4"），不发数字。</summary>
 public enum Slot
 {
     Slot1 = 0,
@@ -13,7 +13,7 @@ public enum Slot
 }
 
 /// <summary>
-/// 槽位编解码。<see cref="IRemapHost"/> 用 0..3 的 int；the reference tool 的线上格式是 <c>Slot1..Slot4</c>。
+/// 槽位编解码。<see cref="IRemapHost"/> 用 0..3 的 int；the v2.6 protocol 的线上格式是 <c>Slot1..Slot4</c>。
 /// 请求里同时接受名字和数字（数字按 1 基，0 也当 Slot1），方便手写脚本。
 /// </summary>
 public static class SlotCodec

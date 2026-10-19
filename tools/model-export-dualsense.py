@@ -47,7 +47,7 @@ for o in meshes:
 
 
 def group_for(name):
-    # Face cluster (PS symbols mapped to the Xbox-convention semantic names, like the reference tool):
+    # Face cluster (PS symbols mapped to the Xbox-convention semantic names, like the v2.6 protocol):
     # B1 = cross (bottom) -> A, B2 = circle (right) -> B, B3 = square (left) -> X,
     # B4 = triangle (top) -> Y. The Button/Symbol suffixes belong to the same physical key.
     if name in ("B1", "B1Button", "B1ButtonSymbol"):

@@ -117,7 +117,7 @@
     <sys:String x:Key="L111">Ring size %</sys:String>
     <sys:String x:Key="L112">Keyboard keys used for mapping (no admin rights needed)</sys:String>
     <sys:String x:Key="L113">Elements this client does not model (user commands, rumble, stick axes…) are preserved as-is and survive saving.</sys:String>
-    <sys:String x:Key="L114">Empty = automatic (the reference Public\Documents\the reference tool\Profiles when present, otherwise Documents\PadShift\Profiles).</sys:String>
+    <sys:String x:Key="L114">Empty = automatic (the reference Public\Documents\the v2.6 protocol\Profiles when present, otherwise Documents\PadShift\Profiles).</sys:String>
     <sys:String x:Key="L115">OK</sys:String>
     <sys:String x:Key="L116">Confirm</sys:String>
     <sys:String x:Key="L117">Confirmations</sys:String>
@@ -218,7 +218,7 @@
     <sys:String x:Key="toast.slot">Switched to slot {0}</sys:String>
     <sys:String x:Key="toast.applied">Applied config: {0}</sys:String>
     <sys:String x:Key="toast.cleared">Slot {0} cleared</sys:String>
-    <sys:String x:Key="dlg.importtitle">Import a the reference tool profile</sys:String>
+    <sys:String x:Key="dlg.importtitle">Import a the v2.6 protocol profile</sys:String>
     <sys:String x:Key="dlg.exporttitle">Export the current profile</sys:String>
     <sys:String x:Key="b.tap">Single tap</sys:String>
     <sys:String x:Key="b.hold">Hold</sys:String>

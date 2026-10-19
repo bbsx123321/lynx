@@ -31,7 +31,7 @@ public sealed class GamepadControlViewModel : ObservableObject
         Radius = radius;
     }
 
-    /// <summary>the reference tool <c>GamepadButton</c> id written into <c>masks[].set[].buttonId</c>.</summary>
+    /// <summary>the v2.6 protocol <c>GamepadButton</c> id written into <c>masks[].set[].buttonId</c>.</summary>
     public long ButtonId { get; }
 
     /// <summary>Short text drawn on the pad (A, LB, LT, P1, ...).</summary>

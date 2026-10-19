@@ -1,6 +1,6 @@
 # PadShift local HTTP API (`/v2.6`)
 
-Clean-room the reference config tool-compatible surface. Only routes that map 1:1 onto `IRemapHost` exist;
+Clean-room the v2.6 protocol-compatible surface. Only routes that map 1:1 onto `IRemapHost` exist;
 everything else answers `404` (JSON string body) and logs once.
 
 ## Listen / config
@@ -14,8 +14,8 @@ everything else answers `404` (JSON string body) and logs once.
 The bound URL is logged at startup. If the container already has an `IRemapHost` it is used,
 otherwise `Dev.FakeRemapHost` (one virtual pad, in-memory state) is registered.
 
-## Security (deliberate improvement over the reference tool)
-the reference config tool has no authentication at all. PadShift binds loopback by default; with `Lan=true`
+## Security (deliberate improvement over the v2.6 protocol)
+the v2.6 protocol has no authentication at all. PadShift binds loopback by default; with `Lan=true`
 every request must send `X-PadShift-Token: <PadShift:Api:Token>` when a token is set, else
 `401` (JSON string). `Lan=true` without a token only logs a warning.
 
@@ -57,11 +57,11 @@ curl -N http://127.0.0.1:35474/v2.6/Events   # LAN: add -H 'X-PadShift-Token: <t
 ```
 
 ## Deliberate omissions / differences
-- `SetLayer` / `CurrentLayer` are **PadShift extensions**: the reference config tool has no layer route (its layers
+- `SetLayer` / `CurrentLayer` are **PadShift extensions**: the v2.6 protocol has no layer route (its layers
   change only through profile shifts). They expose `IRemapHost.SetLayer` / `GetLayer`; an unknown
   layer is `422`, not a silent no-op.
 - No `GameService`, `License`, `Bluetooth`, `ExternalDevices`, `OutputGamepad*`, `WaitForInited`, `PressedButtons`: no 1:1 `IRemapHost` member, so they `404`.
-- `ApplyConfig` turns remap on afterwards (the reference tool semantics); `RemapNoToggled` is accepted but ignored (PadShift's enable is idempotent).
+- `ApplyConfig` turns remap on afterwards (the v2.6 protocol semantics); `RemapNoToggled` is accepted but ignored (PadShift's enable is idempotent).
 - `KeyPressedPoller` is a one-shot `?scanCode=` query, not the reference 75 ms `GamepadState` SSE.
 - SSE payloads carry only fields PadShift has (`ConfigPath` instead of config `Id`, `BatteryPercent` not `BatteryInfo`).
 - `AppliedConfigs` has no config `Id`/`GameId` (file paths only); several paths in a slot give an array. `DataType` is always `PeripheralController`; `ManufacturerInfo` carries VID/PID only.

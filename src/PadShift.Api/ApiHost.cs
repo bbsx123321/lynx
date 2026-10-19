@@ -7,10 +7,10 @@ using PadShift.Core.Host;
 namespace PadShift.Api;
 
 /// <summary>
-/// Builds the PadShift HTTP API (the reference tool v2.6 compatible) around an existing
+/// Builds the PadShift HTTP API (v2.6 wire-compatible) around an existing
 /// <see cref="IRemapHost"/>. The same wiring is used by the standalone
 /// <c>PadShift.Api</c> process and by the WPF client, which hosts the API in-process so a
-/// running PadShift shows up as a the reference tool-compatible controller service on loopback.
+/// running PadShift shows up as a v2.6-compatible controller service on loopback.
 /// </summary>
 /// <remarks>
 /// The host is never started here unless <c>startHost</c> is set: the WPF client owns the
@@ -49,7 +49,7 @@ public static class ApiHost
         builder.Services.TryAddSingleton(options);
         builder.Services.TryAddSingleton(host);
 
-        // 请求体解析也用同一套约定（PascalCase / 字符串枚举），和 the reference tool 客户端发出来的 JSON 对齐。
+        // 请求体解析也用同一套约定（PascalCase / 字符串枚举），和既有 v2.6 客户端发出的 JSON 对齐。
         builder.Services.ConfigureHttpJsonOptions(json =>
         {
             json.SerializerOptions.PropertyNamingPolicy = null;

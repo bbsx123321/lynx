@@ -6,7 +6,7 @@ namespace PadShift.Api;
 
 /// <summary>
 /// <c>PadShift:Api</c> 配置节。默认只绑回环 127.0.0.1:35474，端口被占时顺序回退 35475、35476；
-/// <see cref="Lan"/> 为 true 时改绑 <c>http://*:port</c>（the reference tool 的 <c>EnabledOverLocal</c> 等价物），
+/// <see cref="Lan"/> 为 true 时改绑 <c>http://*:port</c>（the v2.6 protocol 的 <c>EnabledOverLocal</c> 等价物），
 /// 并要求 <c>X-PadShift-Token</c> 头（前提是配置了 <see cref="Token"/>）。
 /// </summary>
 public sealed class ApiOptions
@@ -24,7 +24,7 @@ public sealed class ApiOptions
     /// <summary>LAN 模式下的共享令牌；为空表示不鉴权（会打一条警告）。</summary>
     public string? Token { get; init; }
 
-    /// <summary>SSE 心跳间隔（秒）。the reference tool 固定 60 s，这里可配置以便自测。</summary>
+    /// <summary>SSE 心跳间隔（秒）。the v2.6 protocol 固定 60 s，这里可配置以便自测。</summary>
     public int SseHeartbeatSeconds { get; init; } = 60;
 
     public static ApiOptions Load(IConfiguration configuration)
@@ -118,9 +118,9 @@ public static class ApiPortSelector
             }
         }
 
-        // Windows 允许在某个服务只监听 [::]:port 时再绑定 127.0.0.1:port（本机的 the reference tool
+        // Windows 允许在某个服务只监听 [::]:port 时再绑定 127.0.0.1:port（本机的 the v2.6 protocol
         // Engine 就是这样占着 35474 的）。这种情况下 IPv4 客户端会被我们的进程接管，而
-        // localhost 解析到 ::1 的客户端仍会打到 the reference tool。回环上只要任一地址已有服务在听，
+        // localhost 解析到 ::1 的客户端仍会打到 the v2.6 protocol。回环上只要任一地址已有服务在听，
         // 就视为冲突并换下一个候选端口。
         return !IsListening(IPAddress.Loopback, port) && !IsListening(IPAddress.IPv6Loopback, port);
     }

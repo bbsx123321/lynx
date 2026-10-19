@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lynx 灵犀 — Free Gamepad Mapper, the reference tool Compatible</title>
-<meta name="description" content="Lynx (灵犀) is a free open-source gamepad remapper for Windows. Interactive 3D controller, the reference tool-compatible profiles, virtual gamepads, macros, radial menu.">
+<title>Lynx 灵犀 — Free Gamepad Mapper & Remapper</title>
+<meta name="description" content="Lynx (灵犀) is a free open-source gamepad remapper for Windows. Interactive 3D controller, profile import (.rewasd), virtual gamepads, macros, radial menu.">
 <style>
 :root{
   --bg:#0b0f16;--bg2:#111827;--panel:#141b26;--panel2:#1a2332;
@@ -162,7 +162,7 @@ footer .spacer{flex:1}
     <a href="https://github.com/bbsx123321/lynx" target="_blank" rel="noopener">GitHub</a>
     <span class="spacer"></span>
     <div class="badges">
-      <span class="badge">the reference config tool compatible profiles</span>
+      <span class="badge">the v2.6 protocol compatible profiles</span>
       <span class="badge">3D models: CC0 / MIT</span>
       <span class="badge" data-i18n="badgeLang"></span>
     </div>
@@ -176,10 +176,10 @@ const PROXY_PREFIX = "https://gh-proxy.com/";
 
 const i18n = {
 en: {
-  tag: "Free & open source · the reference tool compatible · Interactive 3D controller",
+  tag: "Free & open source · imports existing profiles · Interactive 3D controller",
   brandCn: "灵犀",
   title: 'Remap your gamepad.<br>With a <b>live 3D controller</b>.',
-  sub: "Lynx maps your gamepad to keyboard, mouse and virtual controllers on Windows. It reads and writes the reference tool-compatible .rewasd profiles, so your existing library works as-is.",
+  sub: "Lynx maps your gamepad to keyboard, mouse and virtual controllers on Windows. It reads and writes .rewasd profiles, so your existing library works as-is.",
   dl: "Download (portable EXE)",
   dlProxy: "CN mirror",
   src: "Source code",
@@ -215,14 +215,14 @@ en: {
   s1t: "Download & run",
   s1d: "Grab the portable EXE (about 84 MB) and double-click — nothing to install, it unpacks and starts.",
   s2t: "Pick a config",
-  s2d: "Import a .rewasd profile, reuse your the reference tool library, or build bindings by clicking controls on the 3D pad.",
+  s2d: "Import a .rewasd profile, reuse your the v2.6 protocol library, or build bindings by clicking controls on the 3D pad.",
   s3t: "Enable mapping",
   s3d: "Hit 启用映射 (Enable mapping) and play. Toggle it any time from the tray or a gamepad combo.",
   vigemNote: "Virtual-controller output needs the free ViGEmBus driver — without it Lynx still does pure keyboard/mouse mapping and tells you so. Optional: Interception driver for kernel-level input, HidHide to hide the physical pad from games.",
   badgeLang: "English / 简体中文",
 },
 zh: {
-  tag: "免费开源 · 兼容 the reference tool · 可交互 3D 手柄",
+  tag: "免费开源 · 兼容 the v2.6 protocol · 可交互 3D 手柄",
   brandCn: "灵犀 · 手柄映射器",
   title: '重映射你的手柄，<br>配一块<b>活的 3D 手柄</b>。',
   sub: "灵犀 Lynx 把手柄映射为键盘、鼠标和虚拟手柄。直接读写 配置互通的 .rewasd 配置，你现有的配置库原样可用。",
@@ -243,7 +243,7 @@ zh: {
   f1t: "可交互 3D 手柄",
   f1d: "主窗口内建实时 3D 手柄：点击部件即绑定、拖动摇杆演示、按下动画，三种外形一键切换（DualSense / Xbox 360 / Switch Pro）。",
   f2t: "配置互通",
-  f2d: "直接读写 the reference tool 配置库里的 .rewasd 文件，兼容其本地 HTTP API —— 你现有的配置继续用。",
+  f2d: "直接读写配置库里的 .rewasd 文件，兼容其本地 HTTP API —— 你现有的配置继续用。",
   f3t: "完整映射引擎",
   f3d: "层 + 激活器、掩码、Shift 模式、摇杆分区、Turbo 连发、宏，由 4 ms 引擎循环驱动，高负载下依然稳定。",
   f4t: "键鼠 + 虚拟手柄输出",
@@ -261,7 +261,7 @@ zh: {
   s1t: "下载运行",
   s1d: "下载绿色版 EXE（约 84 MB），双击即用 —— 免安装，自解压启动。",
   s2t: "选择配置",
-  s2d: "导入 .rewasd 配置、复用 the reference tool 配置库，或在 3D 手柄上点击控件从零搭建绑定。",
+  s2d: "导入 .rewasd 配置、复用已有配置库，或在 3D 手柄上点击控件从零搭建绑定。",
   s3t: "启用映射",
   s3d: "点「启用映射」即可开玩；随时从托盘或手柄组合键开关。",
   vigemNote: "虚拟手柄输出需要免费的 ViGEmBus 驱动 —— 未安装时 灵犀自动降级为纯键鼠映射并给出提示。可选：Interception 驱动提供内核级注入，HidHide 对游戏隐藏物理手柄。",
@@ -275,7 +275,7 @@ function apply() {
   document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = dict[el.dataset.i18n] ?? el.textContent; });
   document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = dict[el.dataset.i18nHtml] ?? el.innerHTML; });
   document.getElementById("langbtn").textContent = lang === "zh" ? "English" : "中文";
-  document.title = lang === "zh" ? "灵犀 Lynx — 免费开源手柄映射器，兼容 the reference tool" : "Lynx 灵犀 — Free Gamepad Mapper, the reference tool Compatible";
+  document.title = lang === "zh" ? "灵犀 Lynx — 免费开源手柄映射器，兼容 the v2.6 protocol" : "Lynx 灵犀 — Free Gamepad Mapper & Remapper";
 }
 function toggleLang() { lang = lang === "zh" ? "en" : "zh"; apply(); save(); }
 function save() { try { localStorage.setItem("padshift-lang", lang); } catch (e) {} }

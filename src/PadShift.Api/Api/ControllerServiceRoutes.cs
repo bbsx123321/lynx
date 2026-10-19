@@ -6,7 +6,7 @@ using PadShift.Core.Host;
 namespace PadShift.Api;
 
 /// <summary>
-/// <c>/v2.6/ControllerService/*</c>：与 the reference config tool 的路由、请求体字段、响应形状保持一致的
+/// <c>/v2.6/ControllerService/*</c>：与 the v2.6 protocol 的路由、请求体字段、响应形状保持一致的
 /// 1:1 <see cref="IRemapHost"/> 映射（见 docs/05-api.md §2）。不在这层做任何映射/持久化。
 /// </summary>
 public static class ControllerServiceRoutes
@@ -30,10 +30,10 @@ public static class ControllerServiceRoutes
         group.MapGet("/AppliedConfigs/{controllerId}", GetAppliedConfigs);
         group.MapGet("/Shifts/{controllerId}", GetShifts);
         group.MapPost("/Vibrate", Vibrate);
-        // the reference tool 文档里的老名字；和 Vibrate 是同一个语义。
+        // the v2.6 protocol 文档里的老名字；和 Vibrate 是同一个语义。
         group.MapPost("/SendGamepadVibration", Vibrate);
 
-        // the reference tool 的 KeyPressedPoller 在根路径下，不在 ControllerService 分组里。
+        // the v2.6 protocol 的 KeyPressedPoller 在根路径下，不在 ControllerService 分组里。
         app.MapGet("/v2.6/KeyPressedPoller/{controllerId}", KeyPressedPoller);
     }
 
@@ -70,7 +70,7 @@ public static class ControllerServiceRoutes
                 "ApplyConfig requires 'Slot' = Slot1..Slot4 (a numeric slot is 1-based).");
         }
 
-        // the reference tool 的 ControllerGuid 可为 null（CLI 的 all_gamepad），这里同样表示「所有手柄」。
+        // the v2.6 protocol 的 ControllerGuid 可为 null（CLI 的 all_gamepad），这里同样表示「所有手柄」。
         var controllerId = request.ControllerGuid ?? request.ControllerId;
         var targets = ResolveTargets(host, controllerId);
         if (targets.Count == 0)
@@ -100,7 +100,7 @@ public static class ControllerServiceRoutes
             }
         }
 
-        // the reference tool 的 ApplyConfig 语义是「应用配置 + 打开 remap」（响应类型就是 EnableRemapResponse）。
+        // the v2.6 protocol 的 ApplyConfig 语义是「应用配置 + 打开 remap」（响应类型就是 EnableRemapResponse）。
         var enable = host.EnableRemap(controllerId);
         return enable.Success
             ? ApiResults.Json(new EnableRemapResponse(true, true, Array.Empty<object>()))
@@ -109,7 +109,7 @@ public static class ControllerServiceRoutes
 
     private static IResult EnableRemap(EnableRemapRequest? request, IRemapHost host)
     {
-        // RemapNoToggled 只对 the reference tool 的「toggle」状态机有意义；PadShift 的 EnableRemap 是幂等的。
+        // RemapNoToggled 只对 the v2.6 protocol 的「toggle」状态机有意义；PadShift 的 EnableRemap 是幂等的。
         var controllerId = request?.Guid ?? request?.ControllerId;
         if (controllerId is { } id && !ControllerExists(host, id))
         {
@@ -170,12 +170,12 @@ public static class ControllerServiceRoutes
             return ApiResults.Error(StatusCodes.Status500InternalServerError, $"SelectSlot failed: {exception.Message}");
         }
 
-        // the reference tool 这个路由返回 bool。
+        // the v2.6 protocol 这个路由返回 bool。
         return ApiResults.Json(true);
     }
 
     /// <summary>
-    /// PadShift extension: the reference config tool has no SetLayer route (layers change only through profile
+    /// PadShift extension: the v2.6 protocol has no SetLayer route (layers change only through profile
     /// shifts), but the radial-menu layer switch and the WPF client both need a host-level call.
     /// </summary>
     private static IResult SetLayer(SetLayerRequest? request, IRemapHost host)
@@ -341,7 +341,7 @@ public static class ControllerServiceRoutes
         int slotIndex;
         if (string.IsNullOrWhiteSpace(slot))
         {
-            // 省略 ?slot= 时按当前槽位查询（the reference tool 的 ?slot= 必填，这里更宽松）。
+            // 省略 ?slot= 时按当前槽位查询（the v2.6 protocol 的 ?slot= 必填，这里更宽松）。
             slotIndex = SafeCurrentSlot(host, id);
         }
         else if (!SlotCodec.TryParseName(slot, out slotIndex))
@@ -365,7 +365,7 @@ public static class ControllerServiceRoutes
 
         if (paths.Count == 0)
         {
-            // the reference tool 对「该槽位没有用户配置」返回 204。
+            // the v2.6 protocol 对「该槽位没有用户配置」返回 204。
             return Results.NoContent();
         }
 
@@ -466,7 +466,7 @@ public static class ControllerServiceRoutes
         return Results.Ok();
     }
 
-    /// <summary>the reference tool 的 Motors 是 MotorMask：位 0 = 左、位 1 = 右；也接受 "Left"/"Right"/"Both"/"All"。</summary>
+    /// <summary>the v2.6 protocol 的 Motors 是 MotorMask：位 0 = 左、位 1 = 右；也接受 "Left"/"Right"/"Both"/"All"。</summary>
     private static (bool Left, bool Right) ParseMotors(JsonElement? motors)
     {
         if (motors is not { } value)
